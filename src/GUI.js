@@ -46,24 +46,17 @@ export function Input({
         OBJECT[name] = value;
         setValue(name, value);
       }
+
+      pane
+        .addInput(OBJECT, name, { options, value, ...settings })
+        .on("change", (value) => {
+          const transformedValue = transform(value);
+          // set the value in the zustand store when it changes
+          setValue(name, transformedValue);
+          return transformedValue;
+        });
     }
   }, [name, value, settings, options, setValue]);
-
-  // add the actual input to the pane
-  useEffect(() => {
-    pane
-      .addInput(OBJECT, name, { options, value, ...settings })
-      .on("change", (value) => {
-        const transformedValue = transform(value);
-        // set the value in the zustand store when it changes
-        setValue(name, transformedValue);
-        return transformedValue;
-      });
-
-    return () => {
-      // there's no remove lol
-    };
-  }, [name, value, settings, options, transform, setValue]);
 
   return null;
 }

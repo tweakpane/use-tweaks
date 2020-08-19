@@ -27,6 +27,7 @@ function App() {
           options={{ low: 10, medium: 50, high: 100 }}
           transform={(value) => parseInt(value, 10)}
         />
+        
 
         {/* @NOTE maybe handle all colors without having the user worry (dedicated <Color /> component?) */}
         <Input name="color" value={{ r: 255, g: 22, b: 0, a: 1 }} />
