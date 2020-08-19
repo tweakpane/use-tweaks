@@ -1,15 +1,12 @@
 import React, { 
   createContext, 
-  createRef, 
   useContext, 
   useLayoutEffect, 
   useMemo,
-  useState, 
 } from 'react'
 import Tweakpane from "tweakpane";
 import create from "zustand";
 import pick from "lodash.pick";
-import memoize from "fast-memoize";
 import shallow from "zustand/shallow";
 import debounce from "lodash.debounce"
 
@@ -46,11 +43,7 @@ export function useGUI(...keys) {
   return stuff;
 }
 
-const x = createRef()
-x.current = {}
-
 const debSetValue = debounce((values) => useStore.setState({ ...values }))
-
 
 export function Input({
   name,
@@ -96,7 +89,7 @@ export function Input({
 
         });
     }
-  }, [name, value, settings, options, setValue]);
+  }, [name, value, settings, options, setValue, pane, transform]);
 
   return null;
 }
