@@ -7,7 +7,7 @@ import { useGUI } from "./GUI";
 
 function Scene() {
   // the defaults are in place only because the ideal method isn't working
-  const [speed = 0, color, rotateOnY, point] = useGUI(
+  const [speed, color, rotateOnY, point] = useGUI(
     "speed",
     "color",
     "rotate on y",

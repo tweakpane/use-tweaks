@@ -3,7 +3,7 @@ import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
 import Scene from "./Scene";
 
-import { GUIRoot, Input } from "./GUI";
+import { GUIRoot, Input, Folder } from "./GUI";
 
 function App() {
   return (
@@ -18,7 +18,6 @@ function App() {
     >
       <OrbitControls />
       <GUIRoot>
-        <Input name="roughness" value={1} min={0} max={1} />
 
         {/* @NOTE if value is omitted in select panes, it should default to the first key */}
         <Input
@@ -28,13 +27,16 @@ function App() {
           transform={(value) => parseInt(value, 10)}
         />
 
-
-        {/* @NOTE maybe handle all colors without having the user worry (dedicated <Color /> component?) */}
-        <Input name="color" value={{ r: 151, g: 45, b: 255, a: 1 }} />
-
         <Input name="rotate on y" value={true} />
         
         <Input name="point" value={{ x: 0, y: 0 }} x={{ min: -2, max: 2 }} y={{ min: -2, max: 2 }} />
+
+        <Folder title={"Material"}>
+          {/* @NOTE maybe handle all colors without having the user worry (dedicated <Color /> component?) */}
+          <Input name="color" value={{ r: 151, g: 45, b: 255, a: 1 }} />
+          <Input name="roughness" value={1} min={0} max={1} />
+        </Folder>
+        
       </GUIRoot>
 
       <pointLight position={[0, 1, 0]} />
