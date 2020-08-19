@@ -28,6 +28,7 @@ export function GUIRoot({ children }) {
   return <folderContext.Provider value={{ pane }}>{children}</folderContext.Provider>;
 }
 
+// @bug folders are mounted twice and they are always before the inputs
 export function Folder({ title, children }) {
   const newPane = useMemo(() => pane.addFolder({
     title

@@ -19,22 +19,28 @@ function App() {
       <OrbitControls />
       <GUIRoot>
 
-        {/* @NOTE if value is omitted in select panes, it should default to the first key */}
-        <Input
-          name="speed"
-          value={"low"}
-          options={{ low: 10, medium: 50, high: 100 }}
-          transform={(value) => parseInt(value, 10)}
-        />
+        <Folder title="Common">
+          {/* @NOTE if value is omitted in select panes, it should default to the first key */}
+          <Input
+            name="speed"
+            value={"low"}
+            options={{ low: 10, medium: 50, high: 100 }}
+            transform={(value) => parseInt(value, 10)}
+          />
+          <Input name="rotate on y" value={true} />
+          <Input name="point" value={{ x: 0, y: 0 }} x={{ min: -2, max: 2 }} y={{ min: -2, max: 2 }} />
+        </Folder>
 
-        <Input name="rotate on y" value={true} />
         
-        <Input name="point" value={{ x: 0, y: 0 }} x={{ min: -2, max: 2 }} y={{ min: -2, max: 2 }} />
-
-        <Folder title={"Material"}>
+        <Folder title={"Left"}>
           {/* @NOTE maybe handle all colors without having the user worry (dedicated <Color /> component?) */}
           <Input name="color" value={{ r: 151, g: 45, b: 255, a: 1 }} />
-          <Input name="roughness" value={1} min={0} max={1} />
+        
+        </Folder>
+
+        <Folder title={"Right"}>
+          {/* @NOTE maybe handle all colors without having the user worry (dedicated <Color /> component?) */}
+          <Input name="right-color" value={{ r: 0, g: 45, b: 255, a: 1 }} />
         </Folder>
         
       </GUIRoot>
