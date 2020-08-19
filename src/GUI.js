@@ -25,7 +25,7 @@ const folderContext = createContext()
 
 // this could be used to mount the child three only when the GUI is ready
 export function GUIRoot({ children }) {
-  return <folderContext.Provider value={{ pane }}>{children}</folderContext.Provider>;
+  return <folderContext.Provider value={pane}>{children}</folderContext.Provider>;
 }
 
 // @bug folders are mounted twice and they are always before the inputs
@@ -34,14 +34,12 @@ export function Folder({ title, children }) {
     title
   }), [title])
 
-  return <folderContext.Provider value={{ pane: newPane }}>{children}</folderContext.Provider>
+  return <folderContext.Provider value={newPane}>{children}</folderContext.Provider>
 }
 
 
 export function useGUI(...keys) {
-  const stuff = useStore((state) => Object.values(pick(state, keys)), shallow)
-  
-  return stuff;
+  return useStore((state) => Object.values(pick(state, keys)), shallow);
 }
 
 const debSetValue = debounce((values) => useStore.setState({ ...values }))
@@ -55,7 +53,7 @@ export function Input({
 }) {
   
   const setValue = useStore((state) => state.setValue);
-  const {pane} = useContext(folderContext)
+  const pane = useContext(folderContext)
 
   // set initial values in the OBJECT and state
   useLayoutEffect(() => {
@@ -77,6 +75,7 @@ export function Input({
       // set initial values from object, doing it debounced helps avoid initial re-renders
       debSetValue(OBJECT)
 
+      // add the actual input
       pane
         .addInput(OBJECT, name, { options, value, ...settings })
         .on("change", (value) => {
