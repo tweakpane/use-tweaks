@@ -25,6 +25,8 @@ function LeftComponent() {
     "point"
   );
 
+  console.log(speed, color, rotateOnY)
+
   return (
     <Octahedron args={[1]} ref={ref} position={[-1.5, 0, 0]}>
         <meshPhysicalMaterial

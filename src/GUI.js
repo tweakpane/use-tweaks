@@ -1,21 +1,16 @@
 import React, { 
   createContext, 
   useContext, 
+  useEffect, 
   useLayoutEffect, 
   useMemo,
+  useRef,
 } from 'react'
 import Tweakpane from "tweakpane";
 import create from "zustand";
 import pick from "lodash.pick";
 import shallow from "zustand/shallow";
 import debounce from "lodash.debounce"
-
-// Array pick, re-renders the component when either state.nuts or state.honey change
-
-// this is the object that will be mutated by Tweakpane
-const OBJECT = {};
-
-const pane = new Tweakpane();
 
 const useStore = create((set) => ({
   setValue: (key, value) => set(() => ({ [key]: value }))
@@ -24,17 +19,26 @@ const useStore = create((set) => ({
 const folderContext = createContext()
 
 // this could be used to mount the child three only when the GUI is ready
-export function GUIRoot({ children }) {
-  return <folderContext.Provider value={pane}>{children}</folderContext.Provider>;
+export function GUIRoot({ children, initialValues }) {
+
+  const pane = new Tweakpane();
+  const OBJECT = useRef(initialValues);
+  
+  useEffect(() => {
+    useStore.setState(() => ({ ...initialValues }))
+  }, [initialValues])
+  
+  return <folderContext.Provider value={{ OBJECT, pane}}>{OBJECT.current && children}</folderContext.Provider>;
 }
 
 // @bug folders are mounted twice and they are always before the inputs
 export function Folder({ title, children }) {
+  const { pane, OBJECT } = useContext(folderContext)
   const newPane = useMemo(() => pane.addFolder({
     title
-  }), [title])
+  }), [title, pane])
 
-  return <folderContext.Provider value={newPane}>{children}</folderContext.Provider>
+  return <folderContext.Provider value={{ OBJECT, pane: newPane}}>{children}</folderContext.Provider>
 }
 
 
@@ -53,42 +57,33 @@ export function Input({
 }) {
   
   const setValue = useStore((state) => state.setValue);
-  const pane = useContext(folderContext)
+  const { OBJECT, pane } = useContext(folderContext)
+
+  const ref = useRef(true)
 
   // set initial values in the OBJECT and state
   useLayoutEffect(() => {
-    if (typeof OBJECT[name] === "undefined") {
-      
-      // options are saved by option name instead of value in tweakpane
-      if (typeof options !== "undefined") {
 
-        const defValue = options[value] || options[Object.keys(options)[0]];
-
-        OBJECT[name] = defValue;
-
-      } else {
-
-        OBJECT[name] = value;
-        
-      }
-
-      // set initial values from object, doing it debounced helps avoid initial re-renders
-      debSetValue(OBJECT)
-
+    if (ref.current) {
       // add the actual input
       pane
-        .addInput(OBJECT, name, { options, value, ...settings })
-        .on("change", (value) => {
+      .addInput(OBJECT.current, name, { options, ...settings })
+      .on("change", (value) => {
 
-          const transformedValue = transform(value);
+        const transformedValue = transform(value);
 
-          // set the value in the zustand store when it changes
-          // debounced because why not
-          debSetValue({ [name]: transformedValue })
-          return transformedValue;
+        // set the value in the zustand store when it changes
+        // debounced because why not
+        debSetValue({ [name]: transformedValue })
+        return transformedValue;
 
-        });
+      });
+
+      ref.current = false
+
     }
+      
+    
   }, [name, value, settings, options, setValue, pane, transform]);
 
   return null;
