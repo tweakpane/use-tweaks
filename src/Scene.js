@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { Octahedron } from "drei";
 import { useFrame } from "react-three-fiber";
 
@@ -7,17 +7,14 @@ import { useGUI } from "./GUI";
 
 function Scene() {
   // the defaults are in place only because the ideal method isn't working
-  const [speed = 10, color, rotateOnY] = useGUI(
+  const [speed = 0, color, rotateOnY, point] = useGUI(
     "speed",
     "color",
-    "rotate on y"
+    "rotate on y",
+    "point"
   );
 
   const ref = useRef();
-
-  useEffect(() => {
-    console.log("Scene Update");
-  });
 
   useFrame(({ clock }) => {
     const geo = ref.current;
@@ -30,7 +27,7 @@ function Scene() {
 
   return (
     <>
-      <Octahedron args={[1]} ref={ref}>
+      <Octahedron args={[1]} ref={ref} position={point && [point.x, point.y, 0]}>
         <meshPhysicalMaterial
           // ideally color would be converted by the component
           color={

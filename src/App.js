@@ -27,12 +27,14 @@ function App() {
           options={{ low: 10, medium: 50, high: 100 }}
           transform={(value) => parseInt(value, 10)}
         />
-        
+
 
         {/* @NOTE maybe handle all colors without having the user worry (dedicated <Color /> component?) */}
-        <Input name="color" value={{ r: 255, g: 22, b: 0, a: 1 }} />
+        <Input name="color" value={{ r: 151, g: 45, b: 255, a: 1 }} />
 
         <Input name="rotate on y" value={true} />
+        
+        <Input name="point" value={{ x: 0, y: 0 }} x={{ min: -2, max: 2 }} y={{ min: -2, max: 2 }} />
       </GUIRoot>
 
       <pointLight position={[0, 1, 0]} />

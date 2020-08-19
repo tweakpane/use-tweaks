@@ -9,6 +9,8 @@
     "drei": "^0.0.72",
     "fast-memoize": "2.5.2",
     "glsl-noise": "^0.0.0",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "react": "^17.0.0-rc.0",
     "react-dom": "^17.0.0-rc.0",
     "react-scripts": "^4.0.0-next.77",
