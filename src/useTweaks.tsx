@@ -27,10 +27,12 @@ function returnInitialData(constructionStuff) {
   );
 }
 
-interface InitialValues {}
+interface InitialValuesObject {
+  [name: string]: any;
+}
 
 export default function useTweaks(id: any, constructionStuff) {
-  const OBJECT = useRef<InitialValues>({});
+  const OBJECT = useRef<InitialValuesObject>({});
   const pane = useRef<Tweakpane>();
 
   useLayoutEffect(() => {
