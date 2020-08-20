@@ -1,7 +1,7 @@
 import React from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
-import Scene from "./Scene2";
+import Scene from "./Scene";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         colorManagement
         camera={{ position: [0, 0, -4], far: 50 }}
         style={{
-          background: "#121212"
+          background: "#121212",
         }}
         concurrent
       >
