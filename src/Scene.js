@@ -8,13 +8,17 @@ import { useTweaks } from './tweaks'
 function Oct() {
   const [speed, rotateY] = useTweaks('speed', 'rotateY')
 
+  const setMouseMonitor = useTweaks.useMonitor('mouse')
+
   const mesh = useRef()
-  useFrame(() => {
+  useFrame(({ mouse }) => {
     mesh.current.rotation.x += speed / 100;
 
     if (rotateY) {
       mesh.current.rotation.y += speed / 100;
     }
+
+    setMouseMonitor(mouse.x)
   })
 
   return <Octahedron ref={mesh}><meshNormalMaterial flatShading /></Octahedron>

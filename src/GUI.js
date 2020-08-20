@@ -1,3 +1,4 @@
+import {useCallback} from 'react'
 import Tweakpane from "tweakpane";
 import zustandCreate from "zustand";
 import pick from "lodash.pick";
@@ -15,8 +16,17 @@ export function create(initialValues) {
   
   // useStore.subscribe(console.log)
   
-  function useGUI(...keys) {
+  function useTweaks(...keys) {
     return useStore((state) => Object.values(pick(state, keys)), shallow);
+  }
+
+  function useMonitor(key) {
+
+    const set = useCallback((value) => {
+      OBJECT[key] = value
+    }, [])
+    
+    return set
   }
   
   const debSetValue = debounce((values) => useStore.setState({ ...values }))
@@ -29,17 +39,35 @@ export function create(initialValues) {
       })
   }
 
+  const addMonitor = pane => (name, ...args) => {
+    return pane.addMonitor(OBJECT, name, ...args)
+  }
+
   const addFolder = pane => (settings) => {
+
     const folder = pane.addFolder(settings)
     
+    // return a proxy
     return {
       addInput: addInput(folder),
-      addFolder: addFolder(folder)
+      addFolder: addFolder(folder),
+      addSeparator: addSeparator(folder),
+      addMonitor: addMonitor(folder)
     }
   }
 
-  useGUI.addInput = addInput(pane)
-  useGUI.addFolder = addFolder(pane)
+  const addSeparator = pane => () => {
+    pane.addSeparator()
+  }
+
+  // add the tweakmap api to the created hook
+  useTweaks.addInput = addInput(pane)
+  useTweaks.addFolder = addFolder(pane)
+  useTweaks.addSeparator = addSeparator(pane)
+  useTweaks.addMonitor = addMonitor(pane)
+
+
+  useTweaks.useMonitor = useMonitor
   
-  return useGUI
+  return useTweaks
 }
