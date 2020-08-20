@@ -1,2 +1,2 @@
-# r3f-tweakpane
+# use-tweakpane
 Created with CodeSandbox
