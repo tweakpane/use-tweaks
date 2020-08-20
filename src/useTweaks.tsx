@@ -10,12 +10,14 @@ const useStore = zustandCreate((set) => ({
   setValue: (fn) => set(produce(fn)),
 }));
 
+// @ts-expect-error
 function returnInitialData(constructionStuff) {
   return Object.entries(constructionStuff).reduce(
     (acc, [key, inputDefintion]) => {
       let inputVal = null;
 
       if (typeof inputDefintion === "object") {
+        // @ts-expect-error
         inputVal = inputDefintion.value;
       } else {
         inputVal = inputDefintion;
@@ -31,6 +33,7 @@ interface InitialValuesObject {
   [name: string]: any;
 }
 
+// @ts-expect-error
 export default function useTweaks(id: any, constructionStuff) {
   const OBJECT = useRef<InitialValuesObject>({});
   const pane = useRef<Tweakpane>();
@@ -52,10 +55,12 @@ export default function useTweaks(id: any, constructionStuff) {
   useLayoutEffect(() => {
     if (!constructed.current) {
       Object.entries(constructionStuff).forEach(([key, inputDefintion]) => {
+        // @ts-expect-error
         let inputVal = null;
         let settings = {};
 
         if (typeof inputDefintion === "object") {
+          // @ts-expect-error
           const { value, ...sett } = inputDefintion;
           inputVal = value;
           settings = sett;
@@ -69,6 +74,7 @@ export default function useTweaks(id: any, constructionStuff) {
         pane.current
           .addInput(OBJECT.current, key, settings)
           .on("change", (value) => {
+            // @ts-expect-error
             setValue((state) => {
               if (typeof state[id] === "undefined") {
                 state[id] = {};
@@ -80,11 +86,13 @@ export default function useTweaks(id: any, constructionStuff) {
 
         keys.current.push(key);
         // set init value
+        // @ts-expect-error
         setValue((state) => {
           if (typeof state[id] === "undefined") {
             state[id] = {};
           }
 
+          // @ts-expect-error
           state[id][key] = inputVal;
         });
       });
