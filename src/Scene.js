@@ -1,10 +1,11 @@
+import * as THREE from 'three'
 import React, { useRef } from "react";
-import { Octahedron } from "drei";
+import { Octahedron, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
 import { useTweaks } from './tweaks'
 
-function Scene() {
+function Oct() {
   const [speed, rotateY] = useTweaks('speed', 'rotateY')
 
   const mesh = useRef()
@@ -19,4 +20,23 @@ function Scene() {
   return <Octahedron ref={mesh}><meshNormalMaterial flatShading /></Octahedron>
 }
 
-export default Scene;
+function Tor() {
+  const [position, color] = useTweaks('position', 'color')
+
+  return <Torus 
+    args={[2, .2, 16, 100]} 
+    rotation-x={Math.PI/2} 
+    position={[position.x, position.y]} 
+    // this conversion should be done by the lib
+    material-color={new THREE.Color(...Object.values(color).map(x => x/255))} 
+  />
+}
+
+export default function Scene() {
+  return (
+    <>
+      <Oct />
+      <Tor />
+    </>
+  )
+};
