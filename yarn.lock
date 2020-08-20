@@ -9245,6 +9245,11 @@ postprocessing@^6.16.0:
   resolved "https://registry.yarnpkg.com/postprocessing/-/postprocessing-6.16.0.tgz#9028c3db08805193d8dc9a5d765122d40976edbb"
   integrity sha512-hw79kzQjSiQhYlHTyRECJMotQ1yRhkzw9tHprxSJF0z/qMx5e9TS4jpAAQOfSbnIr+0vqQG2K0HO23JA/9t3hw==
 
+postprocessing@^6.17.1:
+  version "6.17.1"
+  resolved "https://registry.yarnpkg.com/postprocessing/-/postprocessing-6.17.1.tgz#66f937ce743c98dbc29638bc8fb6c74041e9df2d"
+  integrity sha512-Q8bjFCVgn1ZuG7UoHrjvp6xyKIbOtZOlmJPw3NpIgyLNHva5Bn0iH1OfeHEqKh/o45RLA9rGdxLMAkCrKe7uXQ==
+
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
@@ -9556,10 +9561,17 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
-react-merge-refs@^1.0.0:
+react-merge-refs@^1.0.0, react-merge-refs@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-merge-refs/-/react-merge-refs-1.1.0.tgz#73d88b892c6c68cbb7a66e0800faa374f4c38b06"
   integrity sha512-alTKsjEL0dKH/ru1Iyn7vliS2QRcBp9zZPGoWxUOvRGWPUYgjo+V01is7p04It6KhgrzhJGnIj9GgX8W4bZoCQ==
+
+react-postprocessing@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/react-postprocessing/-/react-postprocessing-1.1.6.tgz#e581da99ef72d3876ed9508ced01fc2072a2f203"
+  integrity sha512-Mwc0b+PThE2L5/0Wc8uz3wDmFI84XWBKf6bnNGJcMTEL7NhtG1yDnudwKZ4+yeraVYu3v4Vp97lddPj60KGiPA==
+  dependencies:
+    react-merge-refs "^1.1.0"
 
 react-promise-suspense@^0.3.3:
   version "0.3.3"
