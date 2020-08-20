@@ -1,10 +1,3 @@
-import React, { 
-  createContext, 
-  useContext, 
-  useEffect, 
-  useRef,
-  useState,
-} from 'react'
 import Tweakpane from "tweakpane";
 import zustandCreate from "zustand";
 import pick from "lodash.pick";
@@ -28,7 +21,7 @@ export function create(initialValues) {
   
   const debSetValue = debounce((values) => useStore.setState({ ...values }))
 
-  function addInput(name, ...args) {
+  const addInput = pane => (name, ...args) => {
 
     return pane.addInput(OBJECT, name, ...args)
       .on('change', value => {
@@ -36,7 +29,17 @@ export function create(initialValues) {
       })
   }
 
-  useGUI.addInput = addInput
+  const addFolder = pane => (settings) => {
+    const folder = pane.addFolder(settings)
+    
+    return {
+      addInput: addInput(folder),
+      addFolder: addFolder(folder)
+    }
+  }
+
+  useGUI.addInput = addInput(pane)
+  useGUI.addFolder = addFolder(pane)
   
   return useGUI
 }
