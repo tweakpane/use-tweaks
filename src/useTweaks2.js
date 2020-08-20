@@ -4,8 +4,10 @@ import zustandCreate from "zustand";
 import pick from "lodash.pick";
 import debounce from "lodash.debounce"
 
+import produce from 'immer'
+
 const useStore = zustandCreate((set) => ({
-    setValue: (key, value) => set(() => ({ [key]: value }))
+    setValue: fn => set(produce(fn))
 }));
 
 function returnInitialData(constructionStuff) {
@@ -71,13 +73,26 @@ export default function useTweaks2(id, constructionStuff) {
                 // onchange, set value in state
                 pane.current.addInput(OBJECT.current, key, settings)
                     .on('change', value => {
-                        setValue(key, value)
+                        setValue(state => { 
+                            
+                            if (typeof state[id] === "undefined") {
+                                state[id] = {}
+                            }
+
+                            state[id][key] = value })
                     })
                 
     
                 keys.current.push(key)
                 // set init value
-                setValue(key, inputVal) 
+                setValue(state => { 
+                    
+                    if (typeof state[id] === "undefined") {
+                        state[id] = {}
+                    }
+
+                    state[id][key] = inputVal 
+                })
             })
     
             constructed.current = true
@@ -86,7 +101,7 @@ export default function useTweaks2(id, constructionStuff) {
 
     }, [constructionStuff])
 
-    const valuesFromState = useStore(state => pick(state, keys.current))
+    const valuesFromState = useStore(state => pick(state[id], keys.current))
 
     return constructed.current ?  valuesFromState : returnInitialData(constructionStuff)
     
