@@ -1,4 +1,4 @@
-import { create } from './GUI'
+import { create } from './useTweaks'
 
 export const useTweaks = create({
     speed: 4,

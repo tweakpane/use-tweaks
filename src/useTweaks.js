@@ -66,7 +66,6 @@ export function create(initialValues) {
   useTweaks.addSeparator = addSeparator(pane)
   useTweaks.addMonitor = addMonitor(pane)
 
-
   useTweaks.useMonitor = useMonitor
   
   return useTweaks
