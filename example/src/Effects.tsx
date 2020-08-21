@@ -1,18 +1,20 @@
 import React from "react";
 import { EffectComposer, ChromaticAberration } from "react-postprocessing";
 
-import { makeSeparator, useTweaks } from "../../dist";
+import { makeDirectory, useTweaks } from "../../dist";
 
 export default function Effects() {
-  const { offset } = useTweaks(
-    {
-      offset: { value: { x: 1, y: 1 } },
-      ...makeSeparator(),
-    },
-    {
-      title: "My Tweaks",
-    }
-  );
+  const { offset } = useTweaks({
+    ...makeDirectory(
+      "Effects",
+      {
+        offset: { value: { x: 1, y: 1 } },
+      },
+      {
+        expanded: false,
+      }
+    ),
+  });
 
   return (
     <EffectComposer>

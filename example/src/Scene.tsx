@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Octahedron, Torus } from "drei";
+import { Octahedron, Text, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
 import {
@@ -20,14 +20,14 @@ function Oct() {
     }
   }, []);
 
-  const myMonitor = makeMonitor("test", {
+  const myMonitor = makeMonitor("Test", {
     view: "graph",
     min: -1,
     max: 1,
     interval: 16,
   });
 
-  const { speed, rotateY, color } = useTweaks({
+  const { speed, rotateY, color } = useTweaks("Octahedron", {
     speed: { value: 1, min: 0, max: 10 },
     rotateY: true,
     ...makeSeparator(),
@@ -59,14 +59,10 @@ function Oct() {
 }
 
 function Tor() {
-  const { speed, rotateY } = useTweaks({
-    ...makeDirectory("Torus", {
-      speed: { value: 1, min: 0, max: 10 },
-      rotateY: false,
-    }),
+  const { speed, rotateY } = useTweaks("Torus", {
+    speed: { value: 1, min: 0, max: 10 },
+    rotateY: false,
   });
-
-  //   const setMouseMonitor = useTweaks.useMonitor('mouse')
 
   const mesh = useRef<THREE.Mesh>();
   useFrame(({ mouse }) => {
@@ -77,8 +73,6 @@ function Tor() {
         mesh.current.rotation.y += speed / 100;
       }
     }
-
-    // setMouseMonitor(mouse.x)
   });
 
   return (
@@ -88,9 +82,24 @@ function Tor() {
   );
 }
 
+function Title() {
+  const { text } = useTweaks({
+    ...makeDirectory("Text", {
+      text: "useTweaks",
+    }),
+  });
+
+  return (
+    <Text fontSize={3} position-z={-1}>
+      {text}
+    </Text>
+  );
+}
+
 export default function Scene() {
   return (
     <>
+      <Title />
       <Oct />
       <Tor />
     </>

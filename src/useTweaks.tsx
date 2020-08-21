@@ -99,9 +99,9 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
       }
 
       if (type === SpecialInputTypes.DIRECTORY) {
-        const { title, schema } = input;
+        const { title, schema, settings } = input;
 
-        const folder = pane.addFolder({ title });
+        const folder = pane.addFolder({ title, ...settings });
 
         constructObjectAndState(id, OBJECT, folder, schema);
 
@@ -143,7 +143,16 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
   });
 }
 
-export function useTweaks(schema: Schema, settings = {}) {
+type Settings = {};
+
+export function useTweaks(
+  nameOrSchema: string | Schema,
+  schema?: Schema | Settings | undefined,
+  settings?: Schema | undefined
+) {
+  const _name = typeof nameOrSchema === "string" && nameOrSchema;
+  const _schema = typeof nameOrSchema === "string" ? schema : nameOrSchema;
+
   const [id] = useState(uuid());
   const constructed = useRef(false);
 
@@ -156,10 +165,17 @@ export function useTweaks(schema: Schema, settings = {}) {
 
   useEffect(() => {
     if (!constructed.current) {
-      constructObjectAndState(id, OBJECT, pane, schema);
+      if (_name) {
+        const paneFolder = pane.addFolder({ title: _name });
+
+        constructObjectAndState(id, OBJECT, paneFolder, _schema);
+      } else {
+        constructObjectAndState(id, OBJECT, pane, _schema);
+      }
+
       constructed.current = true;
     }
-  }, [schema, id]);
+  }, [_name, _schema, id]);
 
   // Only update when values concering this particular instance are changed
   const valuesFromState = useStore(
@@ -167,5 +183,5 @@ export function useTweaks(schema: Schema, settings = {}) {
     shallow
   );
 
-  return constructed.current ? valuesFromState : getInitialValues(schema);
+  return constructed.current ? valuesFromState : getInitialValues(_schema);
 }

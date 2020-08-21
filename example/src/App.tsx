@@ -12,7 +12,7 @@ function App() {
       <Canvas
         shadowMap
         colorManagement
-        camera={{ position: [0, 0, -4], far: 50 }}
+        camera={{ position: [0, 0, 5], far: 50 }}
         style={{
           background: "#121212",
         }}

@@ -18,12 +18,13 @@ export function makeSeparator() {
   };
 }
 
-export function makeDirectory(title: string, schema: Schema) {
+export function makeDirectory(title: string, schema: Schema, settings = {}) {
   return {
     [`_${uuid()}`]: {
       type: SpecialInputTypes.DIRECTORY,
       title,
       schema,
+      settings,
     },
   };
 }
