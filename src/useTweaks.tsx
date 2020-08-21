@@ -150,8 +150,7 @@ export function useTweaks(schema: Schema, settings = {}) {
   useLayoutEffect(() => {
     // initialize a new pane whene non is defined
     if (typeof pane === "undefined") {
-      const container = ensureContainer("tweaks-container");
-      pane = new Tweakpane({ container, ...settings });
+      pane = new Tweakpane(settings);
     }
   }, []);
 
