@@ -1,4 +1,10 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+} from "react";
 import Tweakpane from "tweakpane";
 import type {
   InputParams as TweakpaneInputParams,
@@ -80,6 +86,13 @@ function constructObjectAndState(id, OBJECT, pane, schema, keys) {
     let settings = {};
 
     if (typeof inputDefinition === "object") {
+      if (inputDefinition.type === "_BUTTON") {
+        const { title, onClick } = inputDefinition;
+        pane.addButton({ title }).on("click", onClick);
+
+        return;
+      }
+
       if (inputDefinition.type === "_SEPARATOR") {
         pane.addSeparator();
 
@@ -87,15 +100,11 @@ function constructObjectAndState(id, OBJECT, pane, schema, keys) {
       }
 
       if (inputDefinition.type === "_DIRECTORY") {
-        const folder = pane.addFolder({ title: inputDefinition.title });
+        const { title, schema } = inputDefinition;
 
-        constructObjectAndState(
-          id,
-          OBJECT,
-          folder,
-          inputDefinition.schema,
-          keys
-        );
+        const folder = pane.addFolder({ title });
+
+        constructObjectAndState(id, OBJECT, folder, schema, keys);
 
         return;
       }
@@ -166,7 +175,7 @@ export function useTweaks(schema: Schema) {
 
   // Only update when values concering this particular instance are changed
   const valuesFromState = useStore(
-    (state) => pick(state[id], keys.current),
+    useCallback((state) => pick(state[id], keys.current), [id, keys]),
     shallow
   );
 
@@ -175,7 +184,9 @@ export function useTweaks(schema: Schema) {
 
 export function makeSeparator() {
   return {
-    [`_${uuid()}`]: { type: "_SEPARATOR" },
+    [`_${uuid()}`]: {
+      type: "_SEPARATOR",
+    },
   };
 }
 
@@ -185,6 +196,16 @@ export function makeDirectory(title: string, schema: Schema) {
       type: "_DIRECTORY",
       title,
       schema,
+    },
+  };
+}
+
+export function makeButton(title: string, onClick: () => void) {
+  return {
+    [`_${uuid()}`]: {
+      type: "_BUTTON",
+      title,
+      onClick,
     },
   };
 }

@@ -1,15 +1,25 @@
 import * as THREE from "three";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Octahedron, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
-import { useTweaks, makeSeparator, makeDirectory } from "../../dist";
+import {
+  useTweaks,
+  makeSeparator,
+  makeButton,
+  makeDirectory,
+} from "../../dist";
 
 function Oct() {
+  const restart = useCallback(() => {
+    console.log("Restart");
+  }, []);
+
   const { speed, rotateY, color } = useTweaks({
     speed: { value: 1, min: 0, max: 10 },
     rotateY: true,
     ...makeSeparator(),
+    ...makeButton("Restart", restart),
     color: { value: { r: 200, g: 0, b: 1 } },
   });
 
