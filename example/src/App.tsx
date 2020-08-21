@@ -2,7 +2,9 @@ import React from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
 import { EffectComposer, ChromaticAberration } from "react-postprocessing";
-import useTweaks from "../../src/useTweaks";
+
+import { useTweaks } from "../../dist";
+
 import Scene from "./Scene";
 
 function App() {

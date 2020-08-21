@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Octahedron } from "drei";
 import { useFrame } from "react-three-fiber";
 
-import useTweaks from "../../src/useTweaks";
+import { useTweaks } from "../../dist";
 
 function Oct() {
   const { speed, rotateY } = useTweaks("first", {
@@ -15,13 +15,13 @@ function Oct() {
 
   const mesh = useRef<THREE.Mesh>();
   useFrame(({ mouse }) => {
-    mesh.current.rotation.x += speed / 100;
+    if (mesh.current) {
+      mesh.current.rotation.x += speed / 100;
 
-    if (rotateY) {
-      mesh.current.rotation.y += speed / 100;
+      if (rotateY) {
+        mesh.current.rotation.y += speed / 100;
+      }
     }
-
-    // setMouseMonitor(mouse.x)
   });
 
   return (
@@ -41,10 +41,12 @@ function Tor() {
 
   const mesh = useRef<THREE.Mesh>();
   useFrame(({ mouse }) => {
-    mesh.current.rotation.x += speed / 100;
+    if (mesh.current) {
+      mesh.current.rotation.x += speed / 100;
 
-    if (rotateY) {
-      mesh.current.rotation.y += speed / 100;
+      if (rotateY) {
+        mesh.current.rotation.y += speed / 100;
+      }
     }
 
     // setMouseMonitor(mouse.x)
