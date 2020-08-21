@@ -54,6 +54,15 @@ function returnInitialData(
   );
 }
 
+// creates DOM node in body for the panes
+function createContainer(): HTMLElement {
+  const node = document.createElement("div");
+  node.id = "tweaks-container";
+  document.querySelector("body")?.append(node);
+
+  return node;
+}
+
 export function useTweaks(
   id: string /* `id` should maybe be called `title?`, id makes it seem like it could be anything */,
   constructionStuff: ConstructionStuff
@@ -63,9 +72,16 @@ export function useTweaks(
 
   useLayoutEffect(() => {
     if (typeof pane.current === "undefined") {
+      // look for a container, create one if it can't be found
+      let container = document.querySelector("#tweaks-container");
+
+      if (!container) {
+        container = createContainer();
+      }
+
       pane.current = new Tweakpane({
         title: id,
-        container: document.querySelector(`.test .t${id}`),
+        container,
       });
     }
   }, [id]);

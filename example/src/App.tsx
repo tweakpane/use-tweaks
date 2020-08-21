@@ -38,11 +38,6 @@ function App() {
           />
         </EffectComposer>
       </Canvas>
-      <div className="test">
-        <div className="tfirst" />
-        <div className="tsecond" />
-        <div className="teffects" />
-      </div>
     </>
   );
 }
