@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
 import { EffectComposer, ChromaticAberration } from "react-postprocessing";
@@ -10,6 +10,10 @@ import Scene from "./Scene";
 function App() {
   const { offset } = useTweaks("effects", {
     offset: { value: { x: 0, y: 0 } },
+  });
+
+  useEffect(() => {
+    console.log("App updated");
   });
 
   return (

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import React, { useRef } from "react";
-import { Octahedron } from "drei";
+import React, { useEffect, useRef } from "react";
+import { Octahedron, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
 import { useTweaks } from "../../dist";
@@ -24,8 +24,12 @@ function Oct() {
     }
   });
 
+  useEffect(() => {
+    console.log("OCT updated");
+  });
+
   return (
-    <Octahedron ref={mesh} position={[1, 0, 0]}>
+    <Octahedron ref={mesh} position={[1.5, 0, 0]}>
       <meshNormalMaterial flatShading />
     </Octahedron>
   );
@@ -35,6 +39,10 @@ function Tor() {
   const { speed, rotateY } = useTweaks("second", {
     speed: { value: 1, min: 0, max: 10 },
     rotateY: false,
+  });
+
+  useEffect(() => {
+    console.log("TOR updated");
   });
 
   //   const setMouseMonitor = useTweaks.useMonitor('mouse')
@@ -53,9 +61,9 @@ function Tor() {
   });
 
   return (
-    <Octahedron ref={mesh} position={[-1, 0, 0]}>
+    <Torus ref={mesh} position={[-1.5, 0, 0]}>
       <meshNormalMaterial flatShading />
-    </Octahedron>
+    </Torus>
   );
 }
 

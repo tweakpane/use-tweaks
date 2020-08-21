@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { createRef, useEffect, useLayoutEffect, useRef } from "react";
 import Tweakpane from "tweakpane";
 import type {
   InputParams as TweakpaneInputParams,
@@ -6,6 +6,7 @@ import type {
   BooleanInputParams,
 } from "tweakpane/dist/types/api/types";
 import zustandCreate from "zustand";
+import shallow from "zustand/shallow";
 import pick from "lodash.pick";
 
 import produce from "immer";
@@ -63,15 +64,15 @@ function createContainer(): HTMLElement {
   return node;
 }
 
+const OBJECT = {};
+let pane;
+
 export function useTweaks(
   id: string /* `id` should maybe be called `title?`, id makes it seem like it could be anything */,
   constructionStuff: ConstructionStuff
 ) {
-  const OBJECT = useRef<InitialValuesObject>({});
-  const pane = useRef<Tweakpane>();
-
   useLayoutEffect(() => {
-    if (typeof pane.current === "undefined") {
+    if (typeof pane === "undefined") {
       // look for a container, create one if it can't be found
       let container = document.querySelector("#tweaks-container");
 
@@ -79,7 +80,7 @@ export function useTweaks(
         container = createContainer();
       }
 
-      pane.current = new Tweakpane({
+      pane = new Tweakpane({
         title: id,
         container,
       });
@@ -91,7 +92,7 @@ export function useTweaks(
   const keys = useRef([]);
   const constructed = useRef(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!constructed.current) {
       Object.entries(constructionStuff).forEach(([key, inputDefintion]) => {
         // @ts-expect-error
@@ -106,21 +107,20 @@ export function useTweaks(
           inputVal = inputDefintion;
         }
 
-        OBJECT.current[key] = inputVal;
+        // assign initial value
+        OBJECT[key] = inputVal;
 
         // onchange, set value in state
-        pane.current
-          .addInput(OBJECT.current, key, settings)
-          .on("change", (value) => {
-            // @ts-expect-error
-            setValue((state) => {
-              if (typeof state[id] === "undefined") {
-                state[id] = {};
-              }
+        pane.addInput(OBJECT, key, settings).on("change", (value) => {
+          // @ts-expect-error
+          setValue((state) => {
+            if (typeof state[id] === "undefined") {
+              state[id] = {};
+            }
 
-              state[id][key] = value;
-            });
+            state[id][key] = value;
           });
+        });
 
         keys.current.push(key);
         // set init value
@@ -139,7 +139,10 @@ export function useTweaks(
     }
   }, [constructionStuff, id, setValue]);
 
-  const valuesFromState = useStore((state) => pick(state[id], keys.current));
+  const valuesFromState = useStore(
+    (state) => pick(state[id], keys.current),
+    shallow
+  );
 
   return constructed.current
     ? valuesFromState
