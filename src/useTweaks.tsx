@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import Tweakpane from "tweakpane";
-import { InputParams } from "tweakpane/dist/types/api/types";
+import type { InputParams as TweakpaneInputParams } from "tweakpane/dist/types/api/types";
 import zustandCreate from "zustand";
 import pick from "lodash.pick";
 
@@ -11,14 +11,14 @@ const useStore = zustandCreate((set) => ({
   setValue: (fn) => set(produce(fn)),
 }));
 
-interface InitialValuesObject {
-  [name: string]: any;
-}
-
-type InputConstructor = InputParams & { value: any };
+type InputConstructor = TweakpaneInputParams & { value: any };
 
 interface ConstructionStuff {
   [name: string]: InputConstructor | any;
+}
+
+interface InitialValuesObject {
+  [name: string]: any;
 }
 
 function returnInitialData(
@@ -41,7 +41,7 @@ function returnInitialData(
 }
 
 export default function useTweaks(
-  id: any,
+  id: string /* `id` should maybe be called `title?`, id makes it seem like it could be anything */,
   constructionStuff: ConstructionStuff
 ) {
   const OBJECT = useRef<InitialValuesObject>({});
