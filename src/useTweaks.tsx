@@ -1,6 +1,10 @@
 import { useLayoutEffect, useRef } from "react";
 import Tweakpane from "tweakpane";
-import type { InputParams as TweakpaneInputParams } from "tweakpane/dist/types/api/types";
+import type {
+  InputParams as TweakpaneInputParams,
+  // @ts-ignore individual params not exported????
+  BooleanInputParams,
+} from "tweakpane/dist/types/api/types";
 import zustandCreate from "zustand";
 import pick from "lodash.pick";
 
@@ -19,6 +23,16 @@ interface ConstructionStuff {
 
 interface InitialValuesObject {
   [name: string]: any;
+}
+
+// will be nested conditional for each inut type
+type ReturnedInputState<
+  InputType extends TweakpaneInputParams
+> = InputType extends BooleanInputParams ? boolean : any;
+
+// This should be a mapped type?
+interface ReturnedStateObject<T> {
+  [name: string]: ReturnedInputState<T>;
 }
 
 function returnInitialData(
