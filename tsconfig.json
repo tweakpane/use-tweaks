@@ -1,21 +1,25 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "lib": ["DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
+    "esModuleInterop": true,
+    "module": "ES6",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react",
-    "strictNullChecks": false
+    "preserveSymlinks": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "outDir": "dist",
+    "strict": true,
+    "paths": {
+      "*": ["types/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["./types/**/*", "./src/**/*"],
+  "exclude": ["./node_modules/**/*"]
 }

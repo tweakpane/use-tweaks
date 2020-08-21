@@ -59,7 +59,6 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "prebuild": "rimraf dist && yarn typegen",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "prepare": "yarn build",

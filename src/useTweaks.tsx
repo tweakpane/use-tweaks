@@ -54,7 +54,7 @@ function returnInitialData(
   );
 }
 
-export default function useTweaks(
+export function useTweaks(
   id: string /* `id` should maybe be called `title?`, id makes it seem like it could be anything */,
   constructionStuff: ConstructionStuff
 ) {
