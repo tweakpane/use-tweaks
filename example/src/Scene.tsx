@@ -52,45 +52,20 @@ function Oct() {
   });
 
   return (
-    <Octahedron ref={mesh} position={[1.5, 0, 0]}>
+    <Octahedron ref={mesh} scale={[2, 2, 2]} position={[0, 0, 0]}>
       <meshStandardMaterial color={color} flatShading />
     </Octahedron>
   );
 }
 
-function Tor() {
-  const { speed, rotateY } = useTweaks("Torus", {
-    speed: { value: 1, min: 0, max: 10 },
-    rotateY: false,
-  });
-
-  const mesh = useRef<THREE.Mesh>();
-  useFrame(({ mouse }) => {
-    if (mesh.current) {
-      mesh.current.rotation.x += speed / 100;
-
-      if (rotateY) {
-        mesh.current.rotation.y += speed / 100;
-      }
-    }
-  });
-
-  return (
-    <Torus ref={mesh} position={[-1.5, 0, 0]}>
-      <meshNormalMaterial flatShading />
-    </Torus>
-  );
-}
-
 function Title() {
-  const { text } = useTweaks({
-    ...makeDirectory("Text", {
-      text: "useTweaks",
-    }),
+  const { text, fontSize } = useTweaks("Title", {
+    text: "useTweaks",
+    fontSize: { value: 3, min: 1, max: 4 },
   });
 
   return (
-    <Text fontSize={3} position-z={-1}>
+    <Text fontSize={fontSize} position-z={-2} font={"/font.woff"}>
       {text}
     </Text>
   );
@@ -101,7 +76,6 @@ export default function Scene() {
     <>
       <Title />
       <Oct />
-      <Tor />
     </>
   );
 }

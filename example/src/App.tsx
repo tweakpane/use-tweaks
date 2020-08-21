@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
 
@@ -12,7 +12,7 @@ function App() {
       <Canvas
         shadowMap
         colorManagement
-        camera={{ position: [0, 0, 5], far: 50 }}
+        camera={{ position: [0, 0, 7], far: 50 }}
         style={{
           background: "#121212",
         }}
