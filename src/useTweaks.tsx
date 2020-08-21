@@ -39,7 +39,7 @@ interface ReturnedStateObject<T> {
 }
 
 // The object that Tweakpane will mutate
-const OBJECT = {};
+export const OBJECT = {};
 
 // Will hold a reference to the Tweakpane instance
 let pane: Tweakpane;
@@ -75,6 +75,15 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
 
     if (typeof input === "object") {
       const { type } = input;
+
+      if (type === SpecialInputTypes.MONITOR) {
+        const { key, settings } = input;
+
+        OBJECT[key] = 0;
+        pane.addMonitor(OBJECT, key, settings);
+
+        return;
+      }
 
       if (type === SpecialInputTypes.BUTTON) {
         const { title, onClick } = input;

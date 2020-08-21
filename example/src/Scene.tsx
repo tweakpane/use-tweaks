@@ -8,6 +8,7 @@ import {
   makeSeparator,
   makeButton,
   makeDirectory,
+  makeMonitor,
 } from "../../dist";
 
 function Oct() {
@@ -19,15 +20,26 @@ function Oct() {
     }
   }, []);
 
+  const myMonitor = makeMonitor("test", {
+    view: "graph",
+    min: -1,
+    max: 1,
+    interval: 16,
+  });
+
   const { speed, rotateY, color } = useTweaks({
     speed: { value: 1, min: 0, max: 10 },
     rotateY: true,
     ...makeSeparator(),
     ...makeButton("Restart", restart),
     color: { value: { r: 200, g: 0, b: 1 } },
+    ...myMonitor.get(),
   });
 
-  // const setMouseMonitor = useTweaks.useMonitor('mouse')
+  useFrame(({ mouse }) => {
+    // @ts-ignore
+    myMonitor.set(mouse.y);
+  });
 
   useFrame(({ mouse }) => {
     if (mesh.current) {
