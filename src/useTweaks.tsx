@@ -38,26 +38,22 @@ interface ReturnedStateObject<T> {
   [name: string]: ReturnedInputState<T>;
 }
 
-function returnInitialData(schema: Schema): InitialValuesObject {
-  function getInitialData(schema: Schema) {
-    return Object.entries(schema).reduce((values, [key, inputDefinition]) => {
-      let inputVal = null;
+function getInitialValues(schema: Schema): InitialValuesObject {
+  return Object.entries(schema).reduce((values, [key, inputDefinition]) => {
+    let inputVal = null;
 
-      if (typeof inputDefinition === "object") {
-        inputVal = inputDefinition.value;
+    if (typeof inputDefinition === "object") {
+      inputVal = inputDefinition.value;
 
-        if (inputDefinition.type === "_DIRECTORY") {
-          return { ...values, ...getInitialData(inputDefinition.inputs) };
-        }
-      } else {
-        inputVal = inputDefinition;
+      if (inputDefinition.type === "_DIRECTORY") {
+        return { ...values, ...getInitialValues(inputDefinition.schema) };
       }
+    } else {
+      inputVal = inputDefinition;
+    }
 
-      return { ...values, [key]: inputVal };
-    }, {});
-  }
-
-  return getInitialData(schema);
+    return { ...values, [key]: inputVal };
+  }, {});
 }
 
 // creates DOM node in body for the panes
@@ -69,15 +65,14 @@ function createContainer(): HTMLElement {
   return node;
 }
 
-const OBJECT = {};
 let pane;
 
 function uuid(): string {
   return `${Math.floor((new Date().getTime() * Math.random()) / 1000)}`;
 }
 
-function constructObjectAndState(OBJECT, pane, stuff, keys) {
-  Object.entries(stuff).forEach(([key, inputDefinition]) => {
+function constructObjectAndState(id, OBJECT, pane, schema, keys) {
+  Object.entries(schema).forEach(([key, inputDefinition]) => {
     // @ts-expect-error
     let inputVal = null;
     let settings = {};
@@ -92,7 +87,13 @@ function constructObjectAndState(OBJECT, pane, stuff, keys) {
       if (inputDefinition.type === "_DIRECTORY") {
         const folder = pane.addFolder({ title: inputDefinition.title });
 
-        constructObjectAndState(OBJECT, folder, inputDefinition.inputs);
+        constructObjectAndState(
+          id,
+          OBJECT,
+          folder,
+          inputDefinition.schema,
+          keys
+        );
 
         return;
       }
@@ -156,11 +157,11 @@ export function useTweaks(schema: Schema) {
 
   useEffect(() => {
     if (!constructed.current) {
-      constructObjectAndState(OBJECT, pane, schema);
+      constructObjectAndState(id, OBJECT, pane, schema, keys);
 
       constructed.current = true;
     }
-  }, [schema, id, setValue, constructObjectAndState]);
+  }, [schema, id]);
 
   // Only update when values concering this particular instance are changed
   const valuesFromState = useStore(
@@ -168,7 +169,7 @@ export function useTweaks(schema: Schema) {
     shallow
   );
 
-  return constructed.current ? valuesFromState : returnInitialData(schema);
+  return constructed.current ? valuesFromState : getInitialValues(schema);
 }
 
 export function makeSeparator() {
@@ -177,12 +178,12 @@ export function makeSeparator() {
   };
 }
 
-export function makeDirectory(title, inputs) {
+export function makeDirectory(title: string, schema: Schema) {
   return {
     [uuid()]: {
       type: "_DIRECTORY",
       title,
-      inputs,
+      schema,
     },
   };
 }
