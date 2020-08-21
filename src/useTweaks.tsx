@@ -160,7 +160,6 @@ export function useTweaks(schema: Schema) {
   useEffect(() => {
     if (!constructed.current) {
       constructObjectAndState(id, OBJECT, pane, schema, keys);
-
       constructed.current = true;
     }
   }, [schema, id]);
@@ -176,13 +175,13 @@ export function useTweaks(schema: Schema) {
 
 export function makeSeparator() {
   return {
-    [uuid()]: { type: "_SEPARATOR" },
+    [`_${uuid()}`]: { type: "_SEPARATOR" },
   };
 }
 
 export function makeDirectory(title: string, schema: Schema) {
   return {
-    [uuid()]: {
+    [`_${uuid()}`]: {
       type: "_DIRECTORY",
       title,
       schema,

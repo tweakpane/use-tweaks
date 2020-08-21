@@ -6,10 +6,11 @@ import { useFrame } from "react-three-fiber";
 import { useTweaks, makeSeparator, makeDirectory } from "../../dist";
 
 function Oct() {
-  const { speed, rotateY } = useTweaks({
+  const { speed, rotateY, color } = useTweaks({
     speed: { value: 1, min: 0, max: 10 },
-    ...makeSeparator(),
     rotateY: true,
+    ...makeSeparator(),
+    color: { value: { r: 200, g: 0, b: 1 } },
   });
 
   // const setMouseMonitor = useTweaks.useMonitor('mouse')
@@ -27,7 +28,10 @@ function Oct() {
 
   return (
     <Octahedron ref={mesh} position={[1.5, 0, 0]}>
-      <meshNormalMaterial flatShading />
+      <meshStandardMaterial
+        color={new THREE.Color(color.r / 255, color.g / 255, color.b / 255)}
+        flatShading
+      />
     </Octahedron>
   );
 }
