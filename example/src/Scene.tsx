@@ -32,7 +32,7 @@ function Oct() {
     rotateY: true,
     ...makeSeparator(),
     ...makeButton("Restart", restart),
-    color: { value: { r: 200, g: 0, b: 1 } },
+    color: "#f51d63",
     ...myMonitor.get(),
   });
 
@@ -53,10 +53,7 @@ function Oct() {
 
   return (
     <Octahedron ref={mesh} position={[1.5, 0, 0]}>
-      <meshStandardMaterial
-        color={new THREE.Color(color.r / 255, color.g / 255, color.b / 255)}
-        flatShading
-      />
+      <meshStandardMaterial color={color} flatShading />
     </Octahedron>
   );
 }

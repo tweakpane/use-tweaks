@@ -1,23 +1,12 @@
 import React, { useEffect } from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
-import { EffectComposer, ChromaticAberration } from "react-postprocessing";
 
-import { makeSeparator, useTweaks } from "../../dist";
+import Effects from "./Effects";
 
 import Scene from "./Scene";
 
 function App() {
-  const { offset } = useTweaks(
-    {
-      offset: { value: { x: 0, y: 0 } },
-      ...makeSeparator(),
-    },
-    {
-      title: "My Tweaks",
-    }
-  );
-
   return (
     <>
       <Canvas
@@ -37,12 +26,8 @@ function App() {
         <directionalLight position={[1, 0, 0]} intensity={0.2} />
 
         <Scene />
-        <EffectComposer>
-          <ChromaticAberration
-            // @ts-expect-error
-            offset={[offset.x / 1000, offset.y / 1000]}
-          />
-        </EffectComposer>
+
+        <Effects />
       </Canvas>
     </>
   );
