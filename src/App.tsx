@@ -2,11 +2,11 @@ import React from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
 import {EffectComposer, ChromaticAberration } from 'react-postprocessing'
-import Scene from "./Scene2";
-import useTweaks2 from "./useTweaks2";
+import useTweaks from "./useTweaks";
+import Scene from "./Scene";
 
 function App() {
-  const { offset } = useTweaks2("effects", {
+  const { offset } = useTweaks("effects", {
     offset: { value: { x: 0, y: 0 }}
   })
   
@@ -17,7 +17,7 @@ function App() {
         colorManagement
         camera={{ position: [0, 0, -4], far: 50 }}
         style={{
-          background: "#121212"
+          background: "#121212",
         }}
         concurrent
       >
@@ -30,7 +30,10 @@ function App() {
 
         <Scene />
         <EffectComposer>
-          <ChromaticAberration offset={[offset.x/1000, offset.y/1000]} />
+          <ChromaticAberration 
+            // @ts-expect-error
+            offset={[offset.x/1000, offset.y/1000]}
+          />
         </EffectComposer>
       </Canvas>
       <div className="test">
