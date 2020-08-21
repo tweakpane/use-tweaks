@@ -1,15 +1,15 @@
 import React from "react";
 import { Canvas } from "react-three-fiber";
 import { OrbitControls } from "drei";
-import {EffectComposer, ChromaticAberration } from 'react-postprocessing'
-import useTweaks from "./useTweaks";
+import { EffectComposer, ChromaticAberration } from "react-postprocessing";
+import useTweaks from "../../src/useTweaks";
 import Scene from "./Scene";
 
 function App() {
   const { offset } = useTweaks("effects", {
-    offset: { value: { x: 0, y: 0 }}
-  })
-  
+    offset: { value: { x: 0, y: 0 } },
+  });
+
   return (
     <>
       <Canvas
@@ -30,9 +30,9 @@ function App() {
 
         <Scene />
         <EffectComposer>
-          <ChromaticAberration 
+          <ChromaticAberration
             // @ts-expect-error
-            offset={[offset.x/1000, offset.y/1000]}
+            offset={[offset.x / 1000, offset.y / 1000]}
           />
         </EffectComposer>
       </Canvas>

@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Octahedron } from "drei";
 import { useFrame } from "react-three-fiber";
 
-import useTweaks from "./useTweaks";
+import useTweaks from "../../src/useTweaks";
 
 function Oct() {
   const { speed, rotateY } = useTweaks("first", {
