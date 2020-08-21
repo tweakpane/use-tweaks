@@ -8,6 +8,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gsimone/use-tweaks.git"
+  },
   "dependencies": {
     "@types/lodash.pick": "^4.4.6",
     "fast-memoize": "2.5.2",
