@@ -51,10 +51,18 @@ function getInitialValues(schema: Schema): InitialValuesObject {
     let inputVal = null;
 
     if (typeof inputDefinition === "object") {
-      inputVal = inputDefinition.value;
+      const { value, type } = inputDefinition;
 
-      if (inputDefinition.type === "_DIRECTORY") {
+      if (type === "_DIRECTORY") {
         return { ...values, ...getInitialValues(inputDefinition.schema) };
+      } else {
+        if (
+          type !== "_BUTTON" &&
+          type !== "_SEPARATOR" &&
+          type !== "_MONITOR"
+        ) {
+          inputVal = value;
+        }
       }
     } else {
       inputVal = inputDefinition;

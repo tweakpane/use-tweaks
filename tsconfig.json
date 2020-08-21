@@ -16,6 +16,7 @@
     "declaration": true,
     "outDir": "dist",
     "strict": true,
+    "removeComments": true,
     "paths": {
       "*": ["types/*"]
     }

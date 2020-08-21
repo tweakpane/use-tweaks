@@ -37,6 +37,7 @@ export default [
       ),
       sizeSnapshot(),
       resolve({ extensions }),
+      terser(),
     ],
   },
   {
@@ -48,6 +49,7 @@ export default [
       babel(getBabelOptions({ useESModules: false })),
       sizeSnapshot(),
       resolve({ extensions }),
+      terser(),
     ],
   },
 ];

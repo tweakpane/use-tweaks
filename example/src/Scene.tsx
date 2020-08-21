@@ -11,8 +11,12 @@ import {
 } from "../../dist";
 
 function Oct() {
+  const mesh = useRef<THREE.Mesh>();
+
   const restart = useCallback(() => {
-    console.log("Restart");
+    if (mesh.current) {
+      mesh.current.rotation.x = mesh.current.rotation.y = 0;
+    }
   }, []);
 
   const { speed, rotateY, color } = useTweaks({
@@ -25,7 +29,6 @@ function Oct() {
 
   // const setMouseMonitor = useTweaks.useMonitor('mouse')
 
-  const mesh = useRef<THREE.Mesh>();
   useFrame(({ mouse }) => {
     if (mesh.current) {
       mesh.current.rotation.x += speed / 100;
