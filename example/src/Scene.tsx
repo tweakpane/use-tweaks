@@ -3,12 +3,13 @@ import React, { useEffect, useRef } from "react";
 import { Octahedron, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
-import { useTweaks } from "../../dist";
+import { useTweaks, makeSeparator, makeDirectory } from "../../dist";
 
 function Oct() {
-  const { speed, rotateY } = useTweaks("first", {
+  const { speed, rotateY } = useTweaks({
     speed: { value: 1, min: 0, max: 10 },
-    rotateY: false,
+    ...makeSeparator(),
+    rotateY: true,
   });
 
   // const setMouseMonitor = useTweaks.useMonitor('mouse')
@@ -24,10 +25,6 @@ function Oct() {
     }
   });
 
-  useEffect(() => {
-    console.log("OCT updated");
-  });
-
   return (
     <Octahedron ref={mesh} position={[1.5, 0, 0]}>
       <meshNormalMaterial flatShading />
@@ -36,13 +33,11 @@ function Oct() {
 }
 
 function Tor() {
-  const { speed, rotateY } = useTweaks("second", {
-    speed: { value: 1, min: 0, max: 10 },
-    rotateY: false,
-  });
-
-  useEffect(() => {
-    console.log("TOR updated");
+  const { speed, rotateY } = useTweaks({
+    ...makeDirectory("Torus", {
+      speed: { value: 1, min: 0, max: 10 },
+      rotateY: false,
+    }),
   });
 
   //   const setMouseMonitor = useTweaks.useMonitor('mouse')

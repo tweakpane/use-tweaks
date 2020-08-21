@@ -1,4 +1,4 @@
-import { createRef, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Tweakpane from "tweakpane";
 import type {
   InputParams as TweakpaneInputParams,
@@ -16,9 +16,11 @@ const useStore = zustandCreate((set) => ({
   setValue: (fn) => set(produce(fn)),
 }));
 
+const setValue = useStore.getState().setValue;
+
 type InputConstructor = TweakpaneInputParams & { value: any };
 
-interface ConstructionStuff {
+interface Schema {
   [name: string]: InputConstructor | any;
 }
 
@@ -36,23 +38,26 @@ interface ReturnedStateObject<T> {
   [name: string]: ReturnedInputState<T>;
 }
 
-function returnInitialData(
-  constructionStuff: ConstructionStuff
-): InitialValuesObject {
-  return Object.entries(constructionStuff).reduce(
-    (acc, [key, inputDefintion]) => {
+function returnInitialData(schema: Schema): InitialValuesObject {
+  function getInitialData(schema: Schema) {
+    return Object.entries(schema).reduce((values, [key, inputDefinition]) => {
       let inputVal = null;
 
-      if (typeof inputDefintion === "object") {
-        inputVal = inputDefintion.value;
+      if (typeof inputDefinition === "object") {
+        inputVal = inputDefinition.value;
+
+        if (inputDefinition.type === "_DIRECTORY") {
+          return { ...values, ...getInitialData(inputDefinition.inputs) };
+        }
       } else {
-        inputVal = inputDefintion;
+        inputVal = inputDefinition;
       }
 
-      return { ...acc, [key]: inputVal };
-    },
-    {}
-  );
+      return { ...values, [key]: inputVal };
+    }, {});
+  }
+
+  return getInitialData(schema);
 }
 
 // creates DOM node in body for the panes
@@ -67,10 +72,70 @@ function createContainer(): HTMLElement {
 const OBJECT = {};
 let pane;
 
-export function useTweaks(
-  id: string /* `id` should maybe be called `title?`, id makes it seem like it could be anything */,
-  constructionStuff: ConstructionStuff
-) {
+function uuid(): string {
+  return `${Math.floor((new Date().getTime() * Math.random()) / 1000)}`;
+}
+
+function constructObjectAndState(OBJECT, pane, stuff, keys) {
+  Object.entries(stuff).forEach(([key, inputDefinition]) => {
+    // @ts-expect-error
+    let inputVal = null;
+    let settings = {};
+
+    if (typeof inputDefinition === "object") {
+      if (inputDefinition.type === "_SEPARATOR") {
+        pane.addSeparator();
+
+        return;
+      }
+
+      if (inputDefinition.type === "_DIRECTORY") {
+        const folder = pane.addFolder({ title: inputDefinition.title });
+
+        constructObjectAndState(OBJECT, folder, inputDefinition.inputs);
+
+        return;
+      }
+
+      const { value, ...sett } = inputDefinition;
+      inputVal = value;
+      settings = sett;
+    } else {
+      inputVal = inputDefinition;
+    }
+
+    // assign initial value
+    OBJECT[key] = inputVal;
+
+    // onchange, set value in state
+    pane.addInput(OBJECT, key, settings).on("change", (value) => {
+      // @ts-expect-error
+      setValue((state) => {
+        if (typeof state[id] === "undefined") {
+          state[id] = {};
+        }
+
+        state[id][key] = value;
+      });
+    });
+
+    keys.current.push(key);
+    // set init value
+    // @ts-expect-error
+    setValue((state) => {
+      if (typeof state[id] === "undefined") {
+        state[id] = {};
+      }
+
+      // @ts-expect-error
+      state[id][key] = inputVal;
+    });
+  });
+}
+
+export function useTweaks(schema: Schema) {
+  const [id] = useState(uuid());
+
   useLayoutEffect(() => {
     if (typeof pane === "undefined") {
       // look for a container, create one if it can't be found
@@ -81,70 +146,43 @@ export function useTweaks(
       }
 
       pane = new Tweakpane({
-        title: id,
         container,
       });
     }
-  }, [id]);
+  }, []);
 
-  const setValue = useStore((state) => state.setValue);
-
-  const keys = useRef([]);
+  const keys = useRef<string[]>([]);
   const constructed = useRef(false);
 
   useEffect(() => {
     if (!constructed.current) {
-      Object.entries(constructionStuff).forEach(([key, inputDefintion]) => {
-        // @ts-expect-error
-        let inputVal = null;
-        let settings = {};
-
-        if (typeof inputDefintion === "object") {
-          const { value, ...sett } = inputDefintion;
-          inputVal = value;
-          settings = sett;
-        } else {
-          inputVal = inputDefintion;
-        }
-
-        // assign initial value
-        OBJECT[key] = inputVal;
-
-        // onchange, set value in state
-        pane.addInput(OBJECT, key, settings).on("change", (value) => {
-          // @ts-expect-error
-          setValue((state) => {
-            if (typeof state[id] === "undefined") {
-              state[id] = {};
-            }
-
-            state[id][key] = value;
-          });
-        });
-
-        keys.current.push(key);
-        // set init value
-        // @ts-expect-error
-        setValue((state) => {
-          if (typeof state[id] === "undefined") {
-            state[id] = {};
-          }
-
-          // @ts-expect-error
-          state[id][key] = inputVal;
-        });
-      });
+      constructObjectAndState(OBJECT, pane, schema);
 
       constructed.current = true;
     }
-  }, [constructionStuff, id, setValue]);
+  }, [schema, id, setValue, constructObjectAndState]);
 
+  // Only update when values concering this particular instance are changed
   const valuesFromState = useStore(
     (state) => pick(state[id], keys.current),
     shallow
   );
 
-  return constructed.current
-    ? valuesFromState
-    : returnInitialData(constructionStuff);
+  return constructed.current ? valuesFromState : returnInitialData(schema);
+}
+
+export function makeSeparator() {
+  return {
+    [uuid()]: { type: "_SEPARATOR" },
+  };
+}
+
+export function makeDirectory(title, inputs) {
+  return {
+    [uuid()]: {
+      type: "_DIRECTORY",
+      title,
+      inputs,
+    },
+  };
 }

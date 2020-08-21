@@ -8,12 +8,8 @@ import { useTweaks } from "../../dist";
 import Scene from "./Scene";
 
 function App() {
-  const { offset } = useTweaks("effects", {
+  const { offset } = useTweaks({
     offset: { value: { x: 0, y: 0 } },
-  });
-
-  useEffect(() => {
-    console.log("App updated");
   });
 
   return (
