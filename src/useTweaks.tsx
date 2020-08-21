@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import Tweakpane from "tweakpane";
+import { InputParams } from "tweakpane/dist/types/api/types";
 import zustandCreate from "zustand";
 import pick from "lodash.pick";
 
@@ -10,14 +11,24 @@ const useStore = zustandCreate((set) => ({
   setValue: (fn) => set(produce(fn)),
 }));
 
-// @ts-expect-error
-function returnInitialData(constructionStuff) {
+interface InitialValuesObject {
+  [name: string]: any;
+}
+
+type InputConstructor = InputParams & { value: any };
+
+interface ConstructionStuff {
+  [name: string]: InputConstructor | any;
+}
+
+function returnInitialData(
+  constructionStuff: ConstructionStuff
+): InitialValuesObject {
   return Object.entries(constructionStuff).reduce(
     (acc, [key, inputDefintion]) => {
       let inputVal = null;
 
       if (typeof inputDefintion === "object") {
-        // @ts-expect-error
         inputVal = inputDefintion.value;
       } else {
         inputVal = inputDefintion;
@@ -29,12 +40,10 @@ function returnInitialData(constructionStuff) {
   );
 }
 
-interface InitialValuesObject {
-  [name: string]: any;
-}
-
-// @ts-expect-error
-export default function useTweaks(id: any, constructionStuff) {
+export default function useTweaks(
+  id: any,
+  constructionStuff: ConstructionStuff
+) {
   const OBJECT = useRef<InitialValuesObject>({});
   const pane = useRef<Tweakpane>();
 
@@ -45,7 +54,7 @@ export default function useTweaks(id: any, constructionStuff) {
         container: document.querySelector(`.test .t${id}`),
       });
     }
-  }, []);
+  }, [id]);
 
   const setValue = useStore((state) => state.setValue);
 
@@ -60,7 +69,6 @@ export default function useTweaks(id: any, constructionStuff) {
         let settings = {};
 
         if (typeof inputDefintion === "object") {
-          // @ts-expect-error
           const { value, ...sett } = inputDefintion;
           inputVal = value;
           settings = sett;
