@@ -38,6 +38,8 @@ interface ReturnedStateObject<T> {
   [name: string]: ReturnedInputState<T>;
 }
 
+const OBJECT = {};
+
 function getInitialValues(schema: Schema): InitialValuesObject {
   return Object.entries(schema).reduce((values, [key, inputDefinition]) => {
     let inputVal = null;
