@@ -8,10 +8,15 @@ import { makeSeparator, useTweaks } from "../../dist";
 import Scene from "./Scene";
 
 function App() {
-  const { offset } = useTweaks({
-    offset: { label: "Chromatic Aberration\noffset", value: { x: 0, y: 0 } },
-    ...makeSeparator(),
-  });
+  const { offset } = useTweaks(
+    {
+      offset: { value: { x: 0, y: 0 } },
+      ...makeSeparator(),
+    },
+    {
+      title: "My Tweaks",
+    }
+  );
 
   return (
     <>

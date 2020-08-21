@@ -16,10 +16,11 @@ import shallow from "zustand/shallow";
 import { useStore, setValue } from "./store";
 import { uuid, ensureContainer } from "./utils";
 import { SpecialInputTypes } from "./helpers";
+import { Folder } from "tweakpane/dist/types/model/folder";
 
 type InputConstructor = (TweakpaneInputParams & { value: any }) | any;
 
-interface Schema {
+export interface Schema {
   [name: string]: InputConstructor;
 }
 
@@ -41,7 +42,7 @@ interface ReturnedStateObject<T> {
 const OBJECT = {};
 
 // Will hold a reference to the Tweakpane instance
-let pane;
+let pane: Tweakpane;
 
 function getInitialValues(schema: Schema): InitialValuesObject {
   return Object.entries(schema).reduce((values, [key, inputDefinition]) => {
@@ -66,7 +67,7 @@ function getInitialValues(schema: Schema): InitialValuesObject {
   }, {});
 }
 
-function constructObjectAndState(id, OBJECT, pane, schema) {
+function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
   Object.entries(schema).forEach(([key, input]) => {
     // @ts-expect-error
     let inputVal = null;
@@ -133,7 +134,7 @@ function constructObjectAndState(id, OBJECT, pane, schema) {
   });
 }
 
-export function useTweaks(schema: Schema) {
+export function useTweaks(schema: Schema, settings = {}) {
   const [id] = useState(uuid());
   const constructed = useRef(false);
 
@@ -141,7 +142,7 @@ export function useTweaks(schema: Schema) {
     // initialize a new pane whene non is defined
     if (typeof pane === "undefined") {
       const container = ensureContainer("tweaks-container");
-      pane = new Tweakpane({ container });
+      pane = new Tweakpane({ container, ...settings });
     }
   }, []);
 

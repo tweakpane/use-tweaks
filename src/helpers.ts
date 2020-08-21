@@ -1,5 +1,7 @@
 import { uuid } from "./utils";
 
+import { Schema } from "./useTweaks";
+
 export enum SpecialInputTypes {
   SEPARATOR,
   DIRECTORY,

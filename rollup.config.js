@@ -24,7 +24,7 @@ const getBabelOptions = ({ useESModules }, targets) => ({
 
 export default [
   {
-    input: `./src/index.tsx`,
+    input: `./src/index.ts`,
     output: { file: `dist/index.js`, format: "esm" },
     external,
     plugins: [
@@ -37,11 +37,10 @@ export default [
       ),
       sizeSnapshot(),
       resolve({ extensions }),
-      terser(),
     ],
   },
   {
-    input: `./src/index.tsx`,
+    input: `./src/index.ts`,
     output: { file: `dist/index.cjs.js`, format: "cjs" },
     external,
     plugins: [
@@ -49,7 +48,6 @@ export default [
       babel(getBabelOptions({ useESModules: false })),
       sizeSnapshot(),
       resolve({ extensions }),
-      terser(),
     ],
   },
 ];
