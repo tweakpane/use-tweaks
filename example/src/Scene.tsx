@@ -45,7 +45,7 @@ function Oct() {
   });
 
   return (
-    <Octahedron ref={mesh} scale={[2, 2, 2]} position={[0, 0, 0]}>
+    <Octahedron ref={mesh} scale={[2, 2, 2]} position={[0, -2, 0]}>
       <meshStandardMaterial color={color} flatShading />
     </Octahedron>
   );

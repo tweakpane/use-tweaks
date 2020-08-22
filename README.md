@@ -2,7 +2,7 @@
 
 Use [Tweakpane](http://cocopon.github.io/tweakpane/) in React apps
 
-![A screenshot of the library in use](https://raw.githubusercontent.com/gsimone/use-tweaks/main/screenshot.png)
+![A screenshot of the library in use](https://raw.githubusercontent.com/gsimone/use-tweaks/main/_screenshot.png)
 
 ## Basic example
 
