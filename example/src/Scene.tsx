@@ -3,13 +3,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Octahedron, Text, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
-import {
-  useTweaks,
-  makeSeparator,
-  makeButton,
-  makeDirectory,
-  makeMonitor,
-} from "../../dist";
+import { useTweaks, makeSeparator, makeButton, makeMonitor } from "../../dist";
 
 function Oct() {
   const mesh = useRef<THREE.Mesh>();
@@ -24,7 +18,7 @@ function Oct() {
     view: "graph",
     min: -1,
     max: 1,
-    interval: 16,
+    interval: 64,
   });
 
   const { speed, rotateY, color } = useTweaks("Octahedron", {
@@ -37,7 +31,6 @@ function Oct() {
   });
 
   useFrame(({ mouse }) => {
-    // @ts-ignore
     myMonitor.set(mouse.y);
   });
 

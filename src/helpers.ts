@@ -18,16 +18,20 @@ export function makeSeparator() {
   };
 }
 
-export function makeDirectory(title: string, schema: Schema, settings = {}) {
+export function makeFolder(title: string, schema: Schema, expanded = true) {
   return {
     [`_${uuid()}`]: {
       type: SpecialInputTypes.DIRECTORY,
       title,
       schema,
-      settings,
+      settings: {
+        expanded,
+      },
     },
   };
 }
+
+export const makeDirectory = makeFolder;
 
 export function makeButton(title: string, onClick: () => void) {
   return {
