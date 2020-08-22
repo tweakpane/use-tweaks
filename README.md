@@ -1,6 +1,6 @@
 # 🎛️ use-tweaks
 
-![npm](https://www.npmjs.com/package/use-tweaks) [![Discord Shield](https://discordapp.com/api/guilds/740090768164651008/widget.png?style=shield)](https://discord.gg/ZZjjNvJ)
+![npm](https://img.shields.io/npm/dt/use-tweaks.svg?style=flat-square) [![Discord Shield](https://discordapp.com/api/guilds/740090768164651008/widget.png?style=shield)](https://discord.gg/ZZjjNvJ)
 
 Use [Tweakpane](http://cocopon.github.io/tweakpane/) in React apps
 
