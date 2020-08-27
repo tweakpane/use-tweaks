@@ -156,6 +156,8 @@ export function useTweaks(
   const [id] = useState(uuid());
   const constructed = useRef(false);
 
+  const x = useCallback()
+
   useLayoutEffect(() => {
     // initialize a new pane whene non is defined
     if (typeof pane === "undefined") {
