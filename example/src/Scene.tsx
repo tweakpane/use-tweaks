@@ -1,46 +1,26 @@
 import * as THREE from "three";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Octahedron, Text, Torus } from "drei";
 import { useFrame } from "react-three-fiber";
 
-import { useTweaks, makeSeparator, makeButton, makeMonitor } from "../../dist";
+import { useTweaks, makeSeparator, makeButton } from "../../dist";
 
 function Oct() {
   const mesh = useRef<THREE.Mesh>();
 
-  const restart = useCallback(() => {
-    if (mesh.current) {
-      mesh.current.rotation.x = mesh.current.rotation.y = 0;
-    }
-  }, []);
+  const [dir, setDir] = useState(1);
 
-  const myMonitor = makeMonitor("Test", {
-    view: "graph",
-    min: -1,
-    max: 1,
-    interval: 64,
-  });
-
-  const { speed, rotateY, color } = useTweaks("Octahedron", {
-    speed: { value: 1, min: 0, max: 10 },
-    rotateY: true,
+  const { speed, color } = useTweaks("Octahedron", {
+    speed: { min: 1, max: 10 },
     ...makeSeparator(),
-    ...makeButton("Restart", restart),
+    ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
     color: "#f51d63",
-    ...myMonitor.get(),
   });
 
-  useFrame(({ mouse }) => {
-    myMonitor.set(mouse.y);
-  });
-
-  useFrame(({ mouse }) => {
+  useFrame(() => {
     if (mesh.current) {
-      mesh.current.rotation.x += speed / 100;
-
-      if (rotateY) {
-        mesh.current.rotation.y += speed / 100;
-      }
+      mesh.current.rotation.x += (speed / 100) * dir;
+      mesh.current.rotation.y += (speed / 100) * dir;
     }
   });
 

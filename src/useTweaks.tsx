@@ -6,15 +6,11 @@ import {
   useCallback,
 } from "react";
 import Tweakpane from "tweakpane";
-import type {
-  InputParams as TweakpaneInputParams,
-  // @ts-ignore individual params not exported????
-  BooleanInputParams,
-} from "tweakpane/dist/types/api/types";
+import type { InputParams as TweakpaneInputParams } from "tweakpane/dist/types/api/types";
 import shallow from "zustand/shallow";
 
 import { useStore, setValue } from "./store";
-import { uuid, ensureContainer } from "./utils";
+import { uuid } from "./utils";
 import { SpecialInputTypes } from "./helpers";
 import { Folder } from "tweakpane/dist/types/model/folder";
 
@@ -28,16 +24,6 @@ interface InitialValuesObject {
   [name: string]: any;
 }
 
-// will be nested conditional for each inut type
-type ReturnedInputState<
-  InputType extends TweakpaneInputParams
-> = InputType extends BooleanInputParams ? boolean : any;
-
-// This should be a mapped type?
-interface ReturnedStateObject<T> {
-  [name: string]: ReturnedInputState<T>;
-}
-
 // The object that Tweakpane will mutate
 export const OBJECT = {};
 
@@ -49,14 +35,14 @@ function getInitialValues(schema: Schema): InitialValuesObject {
     let inputVal = null;
 
     if (typeof inputDefinition === "object") {
-      const { value, type } = inputDefinition;
+      const { value, min, type } = inputDefinition;
 
       // if directory, get values from all inputs
       if (type === SpecialInputTypes.DIRECTORY) {
         return { ...values, ...getInitialValues(inputDefinition.schema) };
       } else {
         if (!(type in SpecialInputTypes)) {
-          inputVal = value;
+          inputVal = value || min;
         }
       }
     } else {
@@ -87,6 +73,9 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
 
       if (type === SpecialInputTypes.BUTTON) {
         const { title, onClick } = input;
+
+        if (typeof onClick !== "function")
+          throw new Error("Button onClick must be a function.");
         pane.addButton({ title }).on("click", onClick);
 
         return;
@@ -109,7 +98,8 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
       }
 
       const { value, ...sett } = input;
-      inputVal = value;
+      inputVal = value || sett.min;
+
       settings = sett;
     } else {
       inputVal = input;
@@ -118,27 +108,14 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
     // assign initial value
     OBJECT[key] = inputVal;
 
+    // set init values
+    // @ts-expect-error
+    setValue(id, key, inputVal);
+
     // onchange, set value in state
     pane.addInput(OBJECT, key, settings).on("change", (value) => {
       // @ts-expect-error
-      setValue((state) => {
-        if (typeof state[id] === "undefined") {
-          state[id] = {};
-        }
-
-        state[id][key] = value;
-      });
-    });
-
-    // set init values
-    // @ts-expect-error
-    setValue((state) => {
-      if (typeof state[id] === "undefined") {
-        state[id] = {};
-      }
-
-      // @ts-expect-error
-      state[id][key] = inputVal;
+      setValue(id, key, value);
     });
   });
 }

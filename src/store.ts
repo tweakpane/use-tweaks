@@ -6,4 +6,12 @@ export const useStore = create((set) => ({
   setValue: (fn) => set(produce(fn)),
 }));
 
-export const setValue = useStore.getState().setValue;
+// @ts-expect-error
+export const setValue = (id: string, key: string, value: any) =>
+  useStore.getState().setValue((state) => {
+    if (typeof state[id] === "undefined") {
+      state[id] = {};
+    }
+
+    state[id][key] = value;
+  });
