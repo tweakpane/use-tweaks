@@ -3,6 +3,8 @@
 
 Use [Tweakpane](http://cocopon.github.io/tweakpane/) in React apps
 
+## Try it here https://codesandbox.io/s/react-three-use-tweaks-uec6i
+
 ## Basic example
 
 ```jsx
