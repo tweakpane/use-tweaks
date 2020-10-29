@@ -20,7 +20,7 @@ export function makeSeparator() {
 
 export function makeFolder(title: string, schema: Schema, expanded = true) {
   return {
-    [`_${uuid()}`]: {
+    [`_${title}`]: {
       type: SpecialInputTypes.DIRECTORY,
       title,
       schema,
