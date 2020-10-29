@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Octahedron, Text, Torus } from "drei";
+import React, { useRef, useState } from "react";
+import { Octahedron, Text } from "@react-three/drei";
 import { useFrame } from "react-three-fiber";
 
 import { useTweaks, makeSeparator, makeButton } from "../../dist";
@@ -10,7 +10,7 @@ function Oct() {
 
   const [dir, setDir] = useState(1);
 
-  const { speed, color } = useTweaks("Octahedron", {
+  const { speed, color }: any = useTweaks("Octahedron", {
     speed: { min: 1, max: 10 },
     ...makeSeparator(),
     ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
@@ -32,7 +32,7 @@ function Oct() {
 }
 
 function Title() {
-  const { text, fontSize } = useTweaks("Title", {
+  const { text, fontSize }: any = useTweaks({
     text: "useTweaks",
     fontSize: { value: 3, min: 1, max: 4 },
   });
