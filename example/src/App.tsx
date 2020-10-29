@@ -1,6 +1,6 @@
 import React from "react";
 import { Canvas } from "react-three-fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Box, OrbitControls } from "@react-three/drei";
 
 import Effects from "./Effects";
 
@@ -25,7 +25,7 @@ function App() {
         <directionalLight position={[1, 0, 0]} intensity={0.2} />
 
         <Scene />
-        <Effects />
+        {/* <Effects /> */}
       </Canvas>
     </>
   );

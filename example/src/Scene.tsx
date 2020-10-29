@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import React, { useRef, useState } from "react";
-import { Octahedron, Text } from "@react-three/drei";
+import { Box, Octahedron, Text } from "@react-three/drei";
 import { useFrame } from "react-three-fiber";
 
 import { useTweaks, makeSeparator, makeButton } from "../../dist";
@@ -10,10 +10,9 @@ function Oct() {
 
   const [dir, setDir] = useState(1);
 
-  const { speed, color }: any = useTweaks("Octahedron", {
+  const { speed = 1, color = "#f51d63" }: any = useTweaks("Octahedron", {
     speed: { min: 1, max: 10 },
-    ...makeSeparator(),
-    ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
+    // ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
     color: "#f51d63",
   });
 
@@ -25,14 +24,16 @@ function Oct() {
   });
 
   return (
-    <Octahedron ref={mesh} scale={[2, 2, 2]} position={[0, -2, 0]}>
-      <meshStandardMaterial color={color} flatShading />
-    </Octahedron>
+    <>
+      <Octahedron ref={mesh} scale={[2, 2, 2]} position={[0, -2, 0]}>
+        <meshStandardMaterial color={color} flatShading />
+      </Octahedron>
+    </>
   );
 }
 
 function Title() {
-  const { text, fontSize }: any = useTweaks({
+  const { text = "use tweaks", fontSize = 3 }: any = useTweaks({
     text: "useTweaks",
     fontSize: { value: 3, min: 1, max: 4 },
   });
