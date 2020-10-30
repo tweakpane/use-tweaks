@@ -1,27 +1,27 @@
-import * as THREE from "three";
-import React, { useRef, useState } from "react";
-import { Box, Octahedron, Text } from "@react-three/drei";
-import { useFrame } from "react-three-fiber";
+import * as THREE from 'three'
+import React, { useRef, useState } from 'react'
+import { Box, Octahedron, Text } from '@react-three/drei'
+import { useFrame } from 'react-three-fiber'
 
-import { useTweaks, makeSeparator, makeButton } from "../../dist";
+import { useTweaks, makeSeparator, makeButton } from 'use-tweaks'
 
 function Oct() {
-  const mesh = useRef<THREE.Mesh>();
+  const mesh = useRef<THREE.Mesh>()
 
-  const [dir, setDir] = useState(1);
+  const [dir, setDir] = useState(1)
 
-  const { speed = 1, color = "#f51d63" }: any = useTweaks("Octahedron", {
-    speed: { min: 1, max: 10 },
+  const { speed, color } = useTweaks('Octahedron', {
+    speed: { value: 1, min: 1, max: 10 },
     // ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
-    color: "#f51d63",
-  });
+    color: '#f51d63',
+  })
 
   useFrame(() => {
     if (mesh.current) {
-      mesh.current.rotation.x += (speed / 100) * dir;
-      mesh.current.rotation.y += (speed / 100) * dir;
+      mesh.current.rotation.x += (speed / 100) * dir
+      mesh.current.rotation.y += (speed / 100) * dir
     }
-  });
+  })
 
   return (
     <>
@@ -29,20 +29,20 @@ function Oct() {
         <meshStandardMaterial color={color} flatShading />
       </Octahedron>
     </>
-  );
+  )
 }
 
 function Title() {
-  const { text = "use tweaks", fontSize = 3 }: any = useTweaks({
-    text: "useTweaks",
+  const { text = 'use tweaks', fontSize = 3 }: any = useTweaks({
+    text: 'useTweaks',
     fontSize: { value: 3, min: 1, max: 4 },
-  });
+  })
 
   return (
-    <Text fontSize={fontSize} position-z={-2} font={"/font.woff"}>
+    <Text fontSize={fontSize} position-z={-2} font={'/font.woff'}>
       {text}
     </Text>
-  );
+  )
 }
 
 export default function Scene() {
@@ -51,5 +51,5 @@ export default function Scene() {
       <Title />
       <Oct />
     </>
-  );
+  )
 }

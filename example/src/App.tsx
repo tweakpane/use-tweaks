@@ -1,34 +1,66 @@
-import React from "react";
-import { Canvas } from "react-three-fiber";
-import { Box, OrbitControls } from "@react-three/drei";
+import * as THREE from 'three'
+import React, { Suspense } from 'react'
+import { Canvas } from 'react-three-fiber'
+import { OrbitControls, ContactShadows, useGLTF, useCubeTexture } from '@react-three/drei'
+import { useTweaks } from 'use-tweaks'
 
-import Effects from "./Effects";
+import Badge from './Badge'
 
-import Scene from "./Scene";
+function Suzanne(props) {
+  const { nodes } = useGLTF('./suzanne.glb')
+  const envMap = useCubeTexture(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'], { path: '/cube/' })
 
-function App() {
+  const { color, position, scale } = useTweaks('Suzanne', {
+    color: '#ff005b',
+    position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
+    scale: { value: 1, max: 3 },
+  })
+
   return (
-    <>
-      <Canvas
-        shadowMap
-        colorManagement
-        camera={{ position: [0, 0, 7], far: 50 }}
-        style={{
-          background: "#121212",
-        }}
-        concurrent
-      >
-        <OrbitControls />
-        <pointLight position={[0, 1, 0]} />
-
-        <directionalLight position={[-1, 0, 0]} intensity={0.1} />
-        <directionalLight position={[1, 0, 0]} intensity={0.2} />
-
-        <Scene />
-        {/* <Effects /> */}
-      </Canvas>
-    </>
-  );
+    <mesh {...props} position-x={position.x} position-y={position.y} scale={[scale, scale, scale]}>
+      <primitive object={nodes.Suzanne.geometry} dispose={null} attach="geometry" />
+      <meshPhysicalMaterial color={new THREE.Color(color)} envMap={envMap} metalness={1} roughness={0} />
+    </mesh>
+  )
 }
 
-export default App;
+function Scene() {
+  return (
+    <Suspense fallback={null}>
+      <Suzanne />
+    </Suspense>
+  )
+}
+
+export default function App() {
+  const { color } = useTweaks({ color: '#f2f2f2' })
+
+  return (
+    <>
+      <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
+        <color attach="background" args={[color]} />
+        <fog attach="fog" args={['white', 10, 40]} />
+
+        <ambientLight intensity={0.5} />
+        <directionalLight castShadow position={[2.5, 12, 12]} intensity={1} />
+        <pointLight position={[20, 20, 20]} />
+        <pointLight position={[-20, -20, -20]} intensity={1} />
+
+        <ContactShadows
+          rotation={[Math.PI / 2, 0, 0]}
+          position={[0, -2, 0]}
+          opacity={0.5}
+          width={60}
+          height={60}
+          blur={0.1}
+          far={2}
+        />
+
+        <OrbitControls maxPolarAngle={Math.PI / 2} />
+
+        <Scene />
+      </Canvas>
+      <Badge />
+    </>
+  )
+}

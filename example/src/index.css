@@ -1,9 +1,0 @@
-#tweaks-container {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-}
-
-#tweaks-container > div {
-  margin-bottom: 2px;
-}

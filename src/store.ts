@@ -1,139 +1,78 @@
-import produce from "immer";
-import create from "zustand";
-import Tweakpane from "tweakpane";
+import { useState, useEffect } from 'react'
+import create from 'zustand'
+import Tweakpane from 'tweakpane'
+import { Schema, Folder, SpecialInputTypes, Settings, Button, InputConstructor } from './types'
+import { FolderApi } from 'tweakpane/dist/types/api/folder'
 
-import { SpecialInputTypes } from "./helpers";
+let pane: Tweakpane | undefined
 
-// The object that Tweakpane will mutate
-export const OBJECT = {};
+type StoreType = {
+  dispose: () => void
+  data: { [key: string]: unknown }
+}
 
-export function getInitialValues(schema: Schema): InitialValuesObject {
-  return Object.entries(schema).reduce((values, [key, inputDefinition]) => {
-    let inputVal = null;
-
-    if (typeof inputDefinition === "object") {
-      const { value, min, type } = inputDefinition;
-
-      // if directory, get values from all inputs
-      if (type === SpecialInputTypes.DIRECTORY) {
-        return { ...values, ...getInitialValues(inputDefinition.schema) };
-      } else {
-        if (!(type in SpecialInputTypes)) {
-          inputVal = value || min;
+function buildPaneAndReturnData(
+  schema: Schema,
+  _pane: Tweakpane | FolderApi,
+  setValue: (key: string, value: unknown) => void
+): { [key: string]: unknown } {
+  return Object.entries(schema).reduce((accValues, [key, input]) => {
+    if (typeof input === 'object') {
+      if ('type' in input) {
+        if (input.type === SpecialInputTypes.FOLDER) {
+          const { title, settings, schema } = input as Folder
+          _pane.addFolder({ title, ...settings })
+          return { ...accValues, ...buildPaneAndReturnData(schema, _pane, setValue) }
         }
+
+        if (input.type === SpecialInputTypes.BUTTON) {
+          const { title, onClick } = input as Button
+          if (typeof onClick !== 'function') throw new Error('Button onClick must be a function.')
+          _pane.addButton({ title }).on('click', onClick)
+        } else if (input.type === SpecialInputTypes.SEPARATOR) {
+          _pane.addSeparator()
+        }
+        return accValues
       }
-    } else {
-      inputVal = inputDefinition;
+
+      const { value, ...settings } = input as InputConstructor
+      _pane.addInput({ [key]: value }, key, settings).on('change', value => setValue(key, value))
+      return { ...accValues, [key]: value }
     }
 
-    return { ...values, [key]: inputVal };
-  }, {});
+    _pane.addInput({ [key]: input }, key).on('change', value => setValue(key, value))
+    return { ...accValues, [key]: input }
+  }, {})
 }
 
-function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
-  Object.entries(schema).forEach(([key, input]) => {
-    // @ts-expect-error
-    let inputVal = null;
-    let settings = {};
+function init(set: any, title: string | undefined, schema: Schema, settings?: Settings) {
+  console.log('init')
+  pane = pane || new Tweakpane(settings)
+  const _pane = title ? pane.addFolder({ title }) : pane
 
-    if (typeof input === "object") {
-      const { type } = input;
+  // @ts-ignore
+  const setValue = (key: string, value: unknown) => set(state => ({ ...state, data: { ...state.data, [key]: value } }))
 
-      if (type === SpecialInputTypes.MONITOR) {
-        const { key, settings } = input;
-
-        OBJECT[key] = 0;
-        pane.addMonitor(OBJECT, key, settings);
-
-        return;
-      }
-
-      if (type === SpecialInputTypes.BUTTON) {
-        const { title, onClick } = input;
-
-        if (typeof onClick !== "function")
-          throw new Error("Button onClick must be a function.");
-        pane.addButton({ title }).on("click", onClick);
-
-        return;
-      }
-
-      if (type === SpecialInputTypes.SEPARATOR) {
-        pane.addSeparator();
-
-        return;
-      }
-
-      if (type === SpecialInputTypes.DIRECTORY) {
-        const { title, schema, settings } = input;
-
-        const folder = pane.addFolder({ title, ...settings });
-
-        constructObjectAndState(id, OBJECT, folder, schema);
-
-        return;
-      }
-
-      const { value, ...sett } = input;
-      inputVal = value || sett.min;
-
-      settings = sett;
-    } else {
-      inputVal = input;
-    }
-
-    // assign initial value
-    OBJECT[key] = OBJECT[key] || inputVal;
-
-    // set init values
-    // @ts-expect-error
-    setValue(id, key, inputVal);
-
-    // onchange, set value in state
-    pane.addInput(OBJECT, key, settings).on("change", (value) => {
-      // @ts-expect-error
-      setValue(id, key, value);
-    });
-  });
+  set({ pane })
+  return buildPaneAndReturnData(schema, _pane, setValue)
 }
 
-export const useStore = create((set, get) => ({
-  // @ts-expect-error
-  setValue: (fn) => set(produce(fn)),
-  pane: null,
-  init: (id, nameOrSchema, schema, settings) => {
-    const _name = typeof nameOrSchema === "string" && nameOrSchema;
-    const _schema = typeof nameOrSchema === "string" ? schema : nameOrSchema;
+export const useTweakStore = (title: string | undefined, schema: Schema, settings?: Settings) => {
+  const [store] = useState(() =>
+    create<StoreType>(set => ({
+      data: init(set, title, schema, settings),
+      pane: undefined,
+      dispose: () => {
+        if (pane) pane.dispose()
+      },
+    }))
+  )
 
-    const pane = get().pane || new Tweakpane(settings);
+  const data = store(state => state.data)
 
-    if (_name) {
-      const paneFolder = pane.addFolder({ title: _name });
-      constructObjectAndState(id, OBJECT, paneFolder, _schema);
-    } else {
-      constructObjectAndState(id, OBJECT, pane, _schema);
-    }
+  useEffect(() => {
+    return () => store.getState().dispose()
+  }, [store])
 
-    set({ pane });
-  },
-  dispose: () => {
-    console.log("dispose", JSON.parse(JSON.stringify(OBJECT, null, "  ")));
-    const { pane } = get();
-    if (pane) {
-      pane.dispose();
-      set({ pane: null });
-    }
-  },
-}));
-
-// @ts-expect-error
-export const setValue = (id: string, key: string, value: any) =>
-  useStore.getState().setValue((state) => {
-    if (typeof state[id] === "undefined") {
-      state[id] = {};
-    }
-
-    state[id][key] = value;
-  });
-
-// useStore.subscribe(console.log)
+  return data
+}

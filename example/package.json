@@ -1,50 +1,34 @@
 {
-  "name": "use-tweaks",
-  "version": "0.1.0",
-  "private": true,
+  "name": "example",
+  "version": "1.0.0",
+  "main": "./src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
   "dependencies": {
     "@react-three/drei": "^2.2.3",
     "@react-three/postprocessing": "^1.4.1",
-    "@types/react": "^16.9.55",
-    "@types/react-dom": "^16.9.9",
-    "customize-cra": "^1.0.0",
     "postprocessing": "^6.17.4",
-    "react": "^17.0.1",
-    "react-app-rewired": "^2.1.6",
-    "react-dom": "^17.0.1",
-    "react-scripts": "^4.0.0",
+    "react": "^17.0.0",
+    "react-app-polyfill": "^1.0.0",
+    "react-dom": "^17.0.0",
     "react-three-fiber": "^5.1.4",
     "three": "^0.122.0",
-    "typescript": "^4.0.5"
+    "use-tweaks": "^0.1.0"
   },
-  "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject",
-    "ncu": "npx npm-check-updates"
+  "alias": {
+    "use-tweaks": "../src",
+    "react": "../node_modules/react",
+    "react-dom": "../node_modules/react-dom/profiling",
+    "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
-  },
-  "prettier": {
-    "tabWidth": 2
+  "devDependencies": {
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.8.4",
+    "parcel": "^1.12.3",
+    "parcel-plugin-static-files-copy": "^2.5.0",
+    "typescript": "^3.4.5"
   }
 }
