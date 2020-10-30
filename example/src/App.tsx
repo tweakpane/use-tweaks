@@ -2,8 +2,6 @@ import React from "react";
 import { Canvas } from "react-three-fiber";
 import { Box, OrbitControls } from "@react-three/drei";
 
-import Effects from "./Effects";
-
 import Scene from "./Scene";
 
 function App() {
@@ -18,6 +16,7 @@ function App() {
         }}
         concurrent
       >
+        <Box />
         <OrbitControls />
         <pointLight position={[0, 1, 0]} />
 

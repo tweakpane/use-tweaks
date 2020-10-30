@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import type { InputParams as TweakpaneInputParams } from "tweakpane/dist/types/api/types";
 import shallow from "zustand/shallow";
 
@@ -27,11 +33,16 @@ export function useTweaks(
     // eslint-disable-next-line
   }, []);
 
+  const refreshRef = useRef(0);
+  const _refresh = useStore<number>((state) => state.refresh);
+
   // Only update when values concering this particular instance are changed
   const valuesFromState = useStore(
     useCallback((state) => state[id], [id]),
-    shallow
+    (a, b) => shallow(a, b) && refreshRef.current === _refresh
   );
+
+  useLayoutEffect(() => void (refreshRef.current = _refresh), [_refresh]);
 
   return valuesFromState || getInitialValues(_schema);
 }

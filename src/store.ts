@@ -30,6 +30,9 @@ export function getInitialValues(schema: Schema): InitialValuesObject {
   }, {});
 }
 
+/**
+  This is extracted to a function because it gets reused to build directories
+ */
 function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
   Object.entries(schema).forEach(([key, input]) => {
     // @ts-expect-error
@@ -87,7 +90,7 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
 
     // set init values
     // @ts-expect-error
-    setValue(id, key, inputVal);
+    setValue(id, key, OBJECT[key]);
 
     // onchange, set value in state
     pane.addInput(OBJECT, key, settings).on("change", (value) => {
@@ -101,24 +104,25 @@ export const useStore = create((set, get) => ({
   // @ts-expect-error
   setValue: (fn) => set(produce(fn)),
   pane: null,
+  refresh: new Date().getTime(),
   init: (id, nameOrSchema, schema, settings) => {
     const _name = typeof nameOrSchema === "string" && nameOrSchema;
     const _schema = typeof nameOrSchema === "string" ? schema : nameOrSchema;
 
     const pane = get().pane || new Tweakpane(settings);
 
-    if (_name) {
-      const paneFolder = pane.addFolder({ title: _name });
-      constructObjectAndState(id, OBJECT, paneFolder, _schema);
-    } else {
-      constructObjectAndState(id, OBJECT, pane, _schema);
-    }
+    constructObjectAndState(
+      id,
+      OBJECT,
+      _name ? pane.addFolder({ title: _name }) : pane,
+      _schema
+    );
 
-    set({ pane });
+    set({ pane, refresh: new Date().getTime() });
   },
   dispose: () => {
-    console.log("dispose", JSON.parse(JSON.stringify(OBJECT, null, "  ")));
     const { pane } = get();
+
     if (pane) {
       pane.dispose();
       set({ pane: null });
@@ -135,5 +139,3 @@ export const setValue = (id: string, key: string, value: any) =>
 
     state[id][key] = value;
   });
-
-// useStore.subscribe(console.log)
