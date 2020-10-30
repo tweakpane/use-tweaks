@@ -3,6 +3,8 @@ import { uuid } from "./utils";
 import { Schema } from "./useTweaks";
 import { MonitorParams } from "tweakpane/dist/types/api/types";
 
+import { OBJECT } from "./store";
+
 export enum SpecialInputTypes {
   SEPARATOR,
   DIRECTORY,
@@ -43,15 +45,15 @@ export function makeButton(title: string, onClick: () => void) {
   };
 }
 
-// export function makeMonitor(key: string, settings: MonitorParams = {}) {
-//   return {
-//     set: (value: any) => (OBJECT[key] = value),
-//     get: () => ({
-//       [`_${uuid()}`]: {
-//         type: SpecialInputTypes.MONITOR,
-//         key,
-//         settings,
-//       },
-//     }),
-//   };
-// }
+export function makeMonitor(key: string, settings: MonitorParams = {}) {
+  return {
+    set: (value: any) => (OBJECT[key] = value),
+    get: () => ({
+      [`_${key}`]: {
+        type: SpecialInputTypes.MONITOR,
+        key,
+        settings,
+      },
+    }),
+  };
+}

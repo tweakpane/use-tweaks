@@ -44,7 +44,6 @@ function constructObjectAndState(id, OBJECT, pane: Tweakpane & Folder, schema) {
 
       if (type === SpecialInputTypes.MONITOR) {
         const { key, settings } = input;
-
         OBJECT[key] = 0;
         pane.addMonitor(OBJECT, key, settings);
 
