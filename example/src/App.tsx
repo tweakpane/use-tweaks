@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame } from 'react-three-fiber'
-import { OrbitControls, ContactShadows, useGLTF, useCubeTexture, Box, Octahedron } from '@react-three/drei'
+import { OrbitControls, ContactShadows, useGLTF, useCubeTexture, Octahedron } from '@react-three/drei'
 import { useTweaks, makeFolder, makeSeparator, makeButton } from 'use-tweaks'
 
 import Badge from './Badge'
@@ -18,7 +18,7 @@ function Suzanne(props) {
     }),
     ...makeFolder('Scale', {
       scale: { value: 1, max: 3 },
-      ...makeButton('Log Console', () => console.log('something in the console3' + Date.now())),
+      ...makeButton('Log Console', () => console.log('something in the console ' + Date.now())),
     }),
   })
 

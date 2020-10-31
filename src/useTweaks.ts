@@ -20,17 +20,19 @@ export function useTweaks<T extends Schema>(
 
   useEffect(() => {
     ROOTPANE = ROOTPANE || new Tweakpane({ ..._settings, container: _settings.current?.container?.current! })
-    // if (!_name) refCount++
+    const isRoot = _name === undefined
     const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
-    // console.log('init', { _name, _schema, refCount, _pane }, ROOTPANE)
     const setValue = (key: string, value: unknown) => set(data => ({ ...data, [key]: value }))
     getDataAndBuildPane(_schema.current, setValue, _pane)
 
     return () => {
+      console.log('disposing', _pane)
+      if (!isRoot) _pane.dispose()
       // @ts-expect-error
-      if (!_pane.doc_) return
-      _pane.dispose()
-      if (_pane === ROOTPANE) ROOTPANE = undefined
+      else if (_pane.doc_) {
+        _pane.dispose()
+        ROOTPANE = undefined
+      }
     }
   }, [_name])
 
