@@ -55,7 +55,7 @@ function Scene() {
 
   const { model } = useTweaks({
     model: {
-      value: "duck",
+      value: "Suzanne",
       options: ["suzanne", "Octahedron"]
     }
   })

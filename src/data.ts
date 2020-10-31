@@ -3,7 +3,7 @@ import { InputParams } from 'tweakpane/dist/types/api/types';
 
 function transformSettings(settings: InputParams) {
 
-  let _settings = settings;
+  const _settings = settings;
 
   // @ts-expect-error 
   if (settings.options && Array.isArray(settings.options)) {
