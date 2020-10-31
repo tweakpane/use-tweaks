@@ -1,7 +1,8 @@
-import { InputParams } from 'tweakpane/dist/types/api/types'
-import { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
-import { FolderApi } from 'tweakpane/dist/types/api/folder'
+import type { InputParams } from 'tweakpane/dist/types/api/types'
+import type { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
+import type { FolderApi } from 'tweakpane/dist/types/api/folder'
 import type Tweakpane from 'tweakpane'
+import type { InputtableOutType } from 'tweakpane/dist/types/controller/binding-creators/input'
 
 export type TweakpaneType = Tweakpane | FolderApi
 
@@ -12,12 +13,10 @@ export enum SpecialInputTypes {
   MONITOR,
 }
 
-type Coordinates = { x: number; y: number }
-export type Value = number | string | boolean | Coordinates
-export type InputConstructor = InputParams & { value: Value }
+export type InputConstructor = InputParams & { value: InputtableOutType }
 
 export interface Schema {
-  [name: string]: Value | InputConstructor | Folder | Separator
+  [name: string]: InputtableOutType | InputConstructor | Folder | Separator
 }
 
 export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> } 
@@ -49,14 +48,15 @@ type Leaves<T, D extends number = 10, P extends string | number | symbol = ''> =
   ? never
   : T extends Folder // @ts-ignore
   ? Join<T, 'schema', Leaves<T['schema'], Prev[D]>>
-  : T extends Coordinates
-  ? { [i in P]: T }
   : T extends InputConstructor
   ? { [i in P]: T['value'] }
   : T extends Separator | Button
   ? never
-  : T extends object // @ts-ignore
-  ? { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
+  : T extends object 
+  ? T extends InputtableOutType
+  ? { [i in P]: T }
+  // @ts-ignore
+  : { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
   : ''
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
@@ -81,6 +81,7 @@ const b = useTweaks({
       d: 'al',
       f: 3,
       position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
+      color: { r: 255,g:255,b:255,a:1 },
       offset: { x: 50, y: 25 },
       _33: {
         type: SpecialInputTypes.FOLDER,
@@ -92,6 +93,5 @@ const b = useTweaks({
     settings: { expanded: false },
   },
 })
-
-console.log(b.f)
 */
+
