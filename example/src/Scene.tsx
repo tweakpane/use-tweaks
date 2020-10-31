@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import * as THREE from "three";
 import React, { useRef, useState } from "react";
 import { Box, Octahedron, Sphere, Text, useAspect } from "@react-three/drei";
@@ -5,24 +6,40 @@ import { useFrame } from "react-three-fiber";
 
 import { useTweaks, makeSeparator, makeMonitor, makeButton } from "../../dist";
 import { makeDirectory } from "../../src/helpers";
+=======
+import * as THREE from 'three'
+import React, { useRef, useState } from 'react'
+import { Box, Octahedron, Text } from '@react-three/drei'
+import { useFrame } from 'react-three-fiber'
+
+import { useTweaks, makeSeparator, makeButton } from 'use-tweaks'
+>>>>>>> 64dfb3568201c6788cc1a7a3ed3c1d1d2c819011
 
 function Oct() {
-  const mesh = useRef<THREE.Mesh>();
+  const mesh = useRef<THREE.Mesh>()
 
-  const [dir, setDir] = useState(1);
+  const [dir, setDir] = useState(1)
 
+<<<<<<< HEAD
   const { speed = 1, color = "#f51d63" }: any = useTweaks("Octahedron", {
     speed: { min: 1, max: 10 },
     ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
     color: "#f51d63",
   });
+=======
+  const { speed, color } = useTweaks('Octahedron', {
+    speed: { value: 1, min: 1, max: 10 },
+    // ...makeButton("Reverse", () => setDir((dir) => dir * -1)),
+    color: '#f51d63',
+  })
+>>>>>>> 64dfb3568201c6788cc1a7a3ed3c1d1d2c819011
 
   useFrame(() => {
     if (mesh.current) {
-      mesh.current.rotation.x += (speed / 100) * dir;
-      mesh.current.rotation.y += (speed / 100) * dir;
+      mesh.current.rotation.x += (speed / 100) * dir
+      mesh.current.rotation.y += (speed / 100) * dir
     }
-  });
+  })
 
   return (
     <>
@@ -30,20 +47,20 @@ function Oct() {
         <meshStandardMaterial color={color} flatShading />
       </Octahedron>
     </>
-  );
+  )
 }
 
 function Title() {
-  const { text = "use tweaks", fontSize = 3 }: any = useTweaks({
-    text: "useTweaks",
+  const { text = 'use tweaks', fontSize = 3 }: any = useTweaks({
+    text: 'useTweaks',
     fontSize: { value: 3, min: 1, max: 4 },
-  });
+  })
 
   return (
-    <Text fontSize={fontSize} position-z={-2} font={"/font.woff"}>
+    <Text fontSize={fontSize} position-z={-2} font={'/font.woff'}>
       {text}
     </Text>
-  );
+  )
 }
 
 function easeInOutQuint(x: number): number {
@@ -88,5 +105,5 @@ export default function Scene() {
       <Oct />
       <MouseFollower />
     </>
-  );
+  )
 }

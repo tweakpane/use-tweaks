@@ -1,59 +1,23 @@
-import { uuid } from "./utils";
+import { SpecialInputTypes, Schema, Separator, Folder, Button } from './types'
 
-import { Schema } from "./useTweaks";
-import { MonitorParams } from "tweakpane/dist/types/api/types";
+let separatorCount = 0
 
-import { OBJECT } from "./store";
-
-export enum SpecialInputTypes {
-  SEPARATOR,
-  DIRECTORY,
-  BUTTON,
-  MONITOR,
+export function makeSeparator(): Record<string, Separator> {
+  return {
+    [`_s_${separatorCount++}`]: { type: SpecialInputTypes.SEPARATOR },
+  }
 }
 
-export function makeSeparator(name: string) {
-  return {
-    [`_${name}`]: {
-      type: SpecialInputTypes.SEPARATOR,
-    },
-  };
+export function makeFolder<T extends Schema, P extends string>(title: P, schema: T, expanded = true) {
+  return ({
+    [`_f_${title}`]: { type: SpecialInputTypes.FOLDER, title, schema, settings: { expanded } },
+  } as unknown) as Record<P, Folder<T>>
 }
 
-export function makeFolder(title: string, schema: Schema, expanded = true) {
-  return {
-    [`_${title}`]: {
-      type: SpecialInputTypes.DIRECTORY,
-      title,
-      schema,
-      settings: {
-        expanded,
-      },
-    },
-  };
-}
+export const makeDirectory = makeFolder
 
-export const makeDirectory = makeFolder;
-
-export function makeButton(title: string, onClick: () => void) {
+export function makeButton(title: string, onClick: () => void): Record<string, Button> {
   return {
-    [`_${title}`]: {
-      type: SpecialInputTypes.BUTTON,
-      title,
-      onClick,
-    },
-  };
-}
-
-export function makeMonitor(key: string, settings: MonitorParams = {}) {
-  return {
-    set: (value: any) => (OBJECT[key] = value),
-    get: () => ({
-      [`_${key}`]: {
-        type: SpecialInputTypes.MONITOR,
-        key,
-        settings,
-      },
-    }),
-  };
+    [`_b_${title}`]: { type: SpecialInputTypes.BUTTON, title, onClick },
+  }
 }
