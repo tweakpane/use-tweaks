@@ -18,7 +18,7 @@ function Suzanne(props) {
     }),
     ...makeFolder('Scale', {
       scale: { value: 1, max: 3 },
-      ...makeButton('Log Console', () => console.log('something in the console 2' + Date.now())),
+      ...makeButton('Log Console', () => console.log('something in the console3' + Date.now())),
     }),
   })
 
