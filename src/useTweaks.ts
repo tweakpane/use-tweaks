@@ -1,6 +1,10 @@
-import { useTweakStore } from './store'
+import { useState, useEffect } from 'react'
+import Tweakpane from 'tweakpane'
 
+import { getDataAndBuildPane } from './data'
 import { Schema, Settings, UseTweaksValues } from './types'
+
+let ROOTPANE: Tweakpane | undefined
 
 export function useTweaks<T extends Schema>(
   nameOrSchema: string | T,
@@ -11,7 +15,18 @@ export function useTweaks<T extends Schema>(
   const _schema = typeof nameOrSchema === 'string' ? (schemaOrSettings as T) : nameOrSchema
   const _settings = typeof nameOrSchema === 'string' ? settings : (schemaOrSettings as Settings | undefined)
 
-  const data = useTweakStore(_name, _schema, _settings)
+  const [data, set] = useState(() => getDataAndBuildPane(_schema))
+
+  useEffect(() => {
+    ROOTPANE = ROOTPANE || new Tweakpane(_settings)
+    const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
+    const setValue = (key: string, value: unknown) => set(data => ({ ...data, [key]: value }))
+    getDataAndBuildPane(_schema, setValue, _pane)
+
+    return () => {
+      _pane.dispose()
+    }
+  }, [])
 
   return data as UseTweaksValues<T>
 }

@@ -1,5 +1,9 @@
 import { InputParams } from 'tweakpane/dist/types/api/types'
 import { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
+import { FolderApi } from 'tweakpane/dist/types/api/folder'
+import type Tweakpane from 'tweakpane'
+
+export type TweakpaneType = Tweakpane | FolderApi
 
 export enum SpecialInputTypes {
   SEPARATOR,
