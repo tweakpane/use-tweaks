@@ -12,6 +12,7 @@ node_modules/
 build/
 dist/
 .cache/
+.parcel-cache/
 
 # misc
 .DS_Store
