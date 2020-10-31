@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "module": "dist/use-tweaks.esm.js",
   "files": [
     "dist",
     "src"
@@ -51,5 +52,15 @@
     "jsxBracketSameLine": true,
     "tabWidth": 2,
     "printWidth": 120
-  }
+  },
+  "size-limit": [
+    {
+      "path": "dist/use-tweaks.cjs.production.min.js",
+      "limit": "1 KB"
+    },
+    {
+      "path": "dist/use-tweaks.esm.js",
+      "limit": "1 KB"
+    }
+  ]
 }
