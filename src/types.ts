@@ -20,7 +20,7 @@ export interface Schema {
   [name: string]: Value | InputConstructor | Folder | Separator
 }
 
-export type Settings = TweakpaneConfig
+export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> } 
 
 export interface Folder<T extends Schema = Schema> {
   type: SpecialInputTypes
@@ -64,12 +64,12 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 // @ts-ignore
 export type UseTweaksValues<T> = UnionToIntersection<Leaves<T>>
 
+
 /*
 function useTweaks<T>(schema: T): UseTweaksValues<T> {
   // @ts-ignore
   return schema
 }
-
 const b = useTweaks({
   b: 3,
   _2323: { type: SpecialInputTypes.SEPARATOR },
@@ -80,6 +80,7 @@ const b = useTweaks({
     schema: {
       d: 'al',
       f: 3,
+      position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
       offset: { x: 50, y: 25 },
       _33: {
         type: SpecialInputTypes.FOLDER,
