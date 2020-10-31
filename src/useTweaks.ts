@@ -24,7 +24,7 @@ export function useTweaks<T extends Schema>(
     getDataAndBuildPane(_schema, setValue, _pane)
 
     return () => {
-      _pane.dispose()
+      _pane !== ROOTPANE && _pane.dispose()
     }
   }, [])
 
