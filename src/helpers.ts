@@ -1,22 +1,24 @@
 import { SpecialInputTypes, Schema, Separator, Folder, Button } from './types'
 
-export function makeSeparator(name: string): { [key: string]: Separator } {
+let separatorCount = 0
+
+export function makeSeparator(): Record<string, Separator> {
   return {
-    [`_${name}`]: { type: SpecialInputTypes.SEPARATOR },
+    [`_s_${separatorCount++}`]: { type: SpecialInputTypes.SEPARATOR },
   }
 }
 
-export function makeFolder<T extends Schema>(title: string, schema: T, expanded = true): { [key: string]: Folder<T> } {
-  return {
-    [`_${title}`]: { type: SpecialInputTypes.FOLDER, title, schema, settings: { expanded } },
-  }
+export function makeFolder<T extends Schema, P extends string>(title: P, schema: T, expanded = true) {
+  return ({
+    [`_f_${title}`]: { type: SpecialInputTypes.FOLDER, title, schema, settings: { expanded } },
+  } as unknown) as Record<P, Folder<T>>
 }
 
 export const makeDirectory = makeFolder
 
-export function makeButton(title: string, onClick: () => void): { [key: string]: Button } {
+export function makeButton(title: string, onClick: () => void): Record<string, Button> {
   return {
-    [`_${title}`]: { type: SpecialInputTypes.BUTTON, title, onClick },
+    [`_b_${title}`]: { type: SpecialInputTypes.BUTTON, title, onClick },
   }
 }
 
