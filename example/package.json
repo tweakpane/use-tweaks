@@ -30,6 +30,6 @@
     "@types/react-dom": "^16.8.4",
     "parcel": "^1.12.3",
     "parcel-plugin-static-files-copy": "^2.5.0",
-    "typescript": "^3.4.5"
+    "typescript": "^4.0.5"
   }
 }

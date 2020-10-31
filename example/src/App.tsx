@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import React, { Suspense } from 'react'
 import { Canvas } from 'react-three-fiber'
 import { OrbitControls, ContactShadows, useGLTF, useCubeTexture } from '@react-three/drei'
-import { useTweaks, makeFolder } from 'use-tweaks'
+import { useTweaks, makeFolder, makeSeparator, makeButton } from 'use-tweaks'
 
 import Badge from './Badge'
 
@@ -12,9 +12,13 @@ function Suzanne(props) {
 
   const { color, position, scale } = useTweaks('Suzanne', {
     color: '#ff005b',
-    ...makeFolder('Position and scale', {
+    ...makeSeparator(),
+    ...makeFolder('Position', {
       position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
+    }),
+    ...makeFolder('Scale', {
       scale: { value: 1, max: 3 },
+      ...makeButton('Log Console', () => console.log('something in the console ' + Date.now())),
     }),
   })
 
@@ -37,7 +41,8 @@ function Scene() {
 }
 
 export default function App() {
-  const { color } = useTweaks({ color: '#f2f2f2' })
+  const ref = React.useRef<HTMLDivElement>(null)
+  const { color } = useTweaks({ color: { value: '#f2f2f2', label: 'background' } }, { container: ref })
 
   console.log('render app')
 
@@ -67,6 +72,7 @@ export default function App() {
         <Scene />
       </Canvas>
       <Badge />
+      <div className="tweak-container" ref={ref} />
     </>
   )
 }
