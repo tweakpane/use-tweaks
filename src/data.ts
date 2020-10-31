@@ -1,21 +1,14 @@
 import { Schema, Folder, SpecialInputTypes, Button, InputConstructor, TweakpaneType } from './types'
-import { InputParams } from 'tweakpane/dist/types/api/types';
+import { InputParams } from 'tweakpane/dist/types/api/types'
 
 function transformSettings(settings: InputParams) {
+  if (!('options' in settings)) return settings
 
-  const _settings = settings;
-
-  // @ts-expect-error 
-  if (settings.options && Array.isArray(settings.options)) {
+  if (Array.isArray(settings.options)) {
     // @ts-expect-error
-    _settings.options = settings.options.reduce((acc: Record<string|number, string|number>, option: string | number) => {
-      acc[option] = option
-      return acc 
-    }, {})
+    settings.options = settings.options.reduce((acc, option) => ({ ...acc, [option]: option }), {})
   }
-  
-  return _settings
-
+  return settings
 }
 
 export function getDataAndBuildPane(
@@ -25,7 +18,6 @@ export function getDataAndBuildPane(
 ): { [key: string]: unknown } {
   return Object.entries(schema).reduce((accValues, [key, input]) => {
     if (typeof input === 'object') {
-
       // Handles any tweakpane object that's not an actual Input
       if ('type' in input) {
         if (input.type === SpecialInputTypes.FOLDER) {
