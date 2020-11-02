@@ -4,7 +4,9 @@
   "main": "./src/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html",
+    "copy": "mkdir -p dist && cp -r static/* dist/",
+    "start": "yarn copy && parcel serve index.html",
+    "clean": "rm -rf .parcel-cache dist",
     "build": "parcel build index.html"
   },
   "dependencies": {
@@ -28,8 +30,7 @@
   "devDependencies": {
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.8.4",
-    "parcel": "^1.12.3",
-    "parcel-plugin-static-files-copy": "^2.5.0",
+    "parcel": "^2.0.0-beta.1",
     "typescript": "^4.0.5"
   }
 }

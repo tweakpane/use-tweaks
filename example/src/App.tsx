@@ -1,13 +1,13 @@
 import * as THREE from 'three'
 import React, { Suspense, useRef } from 'react'
-import { Canvas, useFrame } from 'react-three-fiber';
-import { OrbitControls, ContactShadows, useGLTF, useCubeTexture, Box, Octahedron } from '@react-three/drei';
+import { Canvas, useFrame } from 'react-three-fiber'
+import { OrbitControls, ContactShadows, useGLTF, useCubeTexture, Octahedron } from '@react-three/drei'
 import { useTweaks, makeFolder, makeSeparator, makeButton } from 'use-tweaks'
 
 import Badge from './Badge'
 
 function Suzanne(props) {
-  const {envMap}= props
+  const { envMap } = props
   const { nodes } = useGLTF('./suzanne.glb')
 
   const { color, position, scale } = useTweaks('Suzanne', {
@@ -30,23 +30,20 @@ function Suzanne(props) {
   )
 }
 
-function Octa({envMap}) {
+function Octa({ envMap }) {
+  const mesh = useRef()
+  const { move } = useTweaks('Octa', { move: true })
 
-  const mesh = useRef() 
-  const { move } = useTweaks("Octa", {
-    move: true
-  })
-
-  useFrame(({clock}) => {
-    if(move) {
+  useFrame(({ clock }) => {
+    if (move) {
       mesh.current.position.y = Math.sin(clock.getElapsedTime()) * 0.5 + 0.5
     }
   })
 
   return (
-<Octahedron ref={mesh} args={[1, 6]}>
-<meshPhysicalMaterial color={"#f51d63"} envMap={envMap} metalness={1}  roughness={0} />
-  </Octahedron>
+    <Octahedron ref={mesh} args={[1, 6]}>
+      <meshPhysicalMaterial color={'#f51d63'} envMap={envMap} metalness={1} roughness={0} />
+    </Octahedron>
   )
 }
 
@@ -54,15 +51,12 @@ function Scene() {
   const envMap = useCubeTexture(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'], { path: '/cube/' })
 
   const { model } = useTweaks({
-    model: {
-      value: "Suzanne",
-      options: ["suzanne", "Octahedron"]
-    }
+    model: { value: 'Suzanne', options: ['suzanne', 'Octahedron'] },
   })
-  
+
   return (
     <Suspense fallback={null}>
-      {model === "Octahedron" ? <Octa envMap={envMap} /> : <Suzanne envMap={envMap} />}
+      {model === 'Octahedron' ? <Octa envMap={envMap} /> : <Suzanne envMap={envMap} />}
     </Suspense>
   )
 }
@@ -85,15 +79,15 @@ export default function App() {
           opacity={0.5}
           width={12}
           height={12}
-          blur={1.}
+          blur={1}
           far={2}
           resolution={512}
         />
 
         <OrbitControls maxPolarAngle={Math.PI / 2} />
-<Suspense fallback={null}>
-        <Scene />
-</Suspense>
+        <Suspense fallback={null}>
+          <Scene />
+        </Suspense>
       </Canvas>
       <Badge />
       <div className="tweak-container" ref={ref} />

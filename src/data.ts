@@ -1,45 +1,48 @@
-import { Schema, Folder, SpecialInputTypes, Button, InputConstructor, TweakpaneType } from './types'
-import { InputParams } from 'tweakpane/dist/types/api/types';
+import {SpecialInputTypes} from './types'
+import type { Schema, Folder, Button, InputConstructor, TweakpaneType } from './types'
+import type { InputParams } from 'tweakpane/dist/types/api/types'
+import type { InputBindingApi } from 'tweakpane/dist/types/api/input-binding'
+import type { ButtonApi } from 'tweakpane/dist/types/api/button'
+import type { SeparatorApi } from 'tweakpane/dist/types/api/separator'
 
 function transformSettings(settings: InputParams) {
+  if (!('options' in settings)) return settings
 
-  const _settings = settings;
-
-  // @ts-expect-error 
-  if (settings.options && Array.isArray(settings.options)) {
+  if (Array.isArray(settings.options)) {
     // @ts-expect-error
-    _settings.options = settings.options.reduce((acc: Record<string|number, string|number>, option: string | number) => {
-      acc[option] = option
-      return acc 
-    }, {})
+    settings.options = settings.options.reduce((acc, option) => ({ ...acc, [option]: option }), {})
   }
-  
-  return _settings
-
+  return settings
 }
 
-export function getDataAndBuildPane(
+type Disposable = TweakpaneType | ButtonApi | SeparatorApi | InputBindingApi<any, any>
+
+function getDataOrBuildPane(
   schema: Schema,
   setValue?: (key: string, value: unknown) => void,
   rootPane?: TweakpaneType
-): { [key: string]: unknown } {
-  return Object.entries(schema).reduce((accValues, [key, input]) => {
-    if (typeof input === 'object') {
+) {
+  const nestedPanes: Disposable[] = []
 
+  const data: Record<string, unknown> = Object.entries(schema).reduce((accValues, [key, input]) => {
+    if (typeof input === 'object') {
       // Handles any tweakpane object that's not an actual Input
       if ('type' in input) {
         if (input.type === SpecialInputTypes.FOLDER) {
           const { title, settings, schema } = input as Folder
           const folderPane = rootPane ? rootPane.addFolder({ title, ...settings }) : undefined
-          return { ...accValues, ...getDataAndBuildPane(schema, setValue, folderPane) }
+          nestedPanes.push(folderPane!)
+          return { ...accValues, ...getDataOrBuildPane(schema, setValue, folderPane) }
         }
 
         if (input.type === SpecialInputTypes.BUTTON) {
           const { title, onClick } = input as Button
           if (typeof onClick !== 'function') throw new Error('Button onClick must be a function.')
-          rootPane?.addButton({ title }).on('click', onClick)
+          const button = rootPane?.addButton({ title }).on('click', onClick)
+          nestedPanes.push(button!)
         } else if (input.type === SpecialInputTypes.SEPARATOR) {
-          rootPane?.addSeparator()
+          const separator = rootPane?.addSeparator()
+          nestedPanes.push(separator!)
         }
         return accValues
       }
@@ -47,13 +50,19 @@ export function getDataAndBuildPane(
       const { value, ...settings } = input as InputConstructor
 
       let _settings = transformSettings(settings)
-      rootPane?.addInput({ [key]: value }, key, _settings).on('change', value => setValue!(key, value))
-
+      const pane = rootPane?.addInput({ [key]: value }, key, _settings).on('change', value => setValue!(key, value))
+      nestedPanes.push(pane!)
       return { ...accValues, [key]: value }
     }
 
-    rootPane?.addInput({ [key]: input }, key).on('change', value => setValue!(key, value))
-
+    const pane = rootPane?.addInput({ [key]: input }, key).on('change', value => setValue!(key, value))
+    nestedPanes.push(pane!)
     return { ...accValues, [key]: input }
   }, {})
+
+  return !!rootPane ? nestedPanes : data
 }
+
+export const getData = (schema: Schema) => getDataOrBuildPane(schema) as Record<string, unknown>
+export const buildPane = (schema: Schema, setValue: (key: string, value: unknown) => void, rootPane: TweakpaneType) =>
+  getDataOrBuildPane(schema, setValue, rootPane) as Disposable[]
