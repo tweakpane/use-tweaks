@@ -70,5 +70,9 @@
       "path": "dist/use-tweaks.esm.js",
       "limit": "1 KB"
     }
-  ]
+  ],
+  "dependencies": {
+    "get-value": "^3.0.1",
+    "set-value": "^3.0.2"
+  }
 }
