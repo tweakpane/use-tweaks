@@ -33,14 +33,17 @@ type Disposable = TweakpaneType | ButtonApi | SeparatorApi | InputBindingApi<any
 //     ...
 //   }
 // }
-const DATA: any = { root: { inputs: {} } }
+const DATA: any = { root: {} }
+// window.DATA = DATA
+// const FOLDERS: Record<string, TweakpaneType> = {}
+// window.FOLDERS = FOLDERS
 
 // this function traverses the schema and sets the initial input values.
 // - if the global DATA object already holds a key matching the schema input,
 //   then the DATA object key value is used as the initial value.
 // - if the global DATA object key is empty, then the DATA object key is
 //   initialized with the schema value.
-export function getData(schema: Schema, rootPath: string = 'root') {
+export function getData(schema: Schema, rootPath: string) {
   const data: Record<string, unknown> = Object.entries(schema).reduce((accValues, [key, input]) => {
     // the path to the inputs of object in nested folders
     // we use set and get to access paths such as
@@ -86,7 +89,7 @@ export function getData(schema: Schema, rootPath: string = 'root') {
 // as nested panes will be disposed when their parents are.
 export function buildPane(
   schema: Schema,
-  rootPath: string = 'root',
+  rootPath: string,
   setValue: (key: string, value: unknown) => void,
   rootPane: TweakpaneType
 ) {
@@ -96,6 +99,8 @@ export function buildPane(
 
   // we read the inputs of the nested path
   let INPUTS = get(DATA, `${rootPath}.inputs`)
+  // console.log('creating folder', rootPath)
+  // FOLDERS[rootPath] = rootPane
   Object.entries(schema).forEach(([key, input]) => {
     if (typeof input === 'object') {
       if ('type' in input) {
@@ -103,6 +108,7 @@ export function buildPane(
           // if the input is a Folder, we recursively add the folder structure
           // to Tweakpane
           const { title, settings, schema } = input as Folder
+          // console.log(`${rootPath}.${title}`, FOLDERS[`${rootPath}.${title}`])
           const folderPane = rootPane.addFolder({ title, ...settings })
           nestedPanes.push(folderPane)
           buildPane(schema, `${rootPath}.${title}`, setValue, folderPane)
