@@ -34,9 +34,6 @@ type Disposable = TweakpaneType | ButtonApi | SeparatorApi | InputBindingApi<any
 //   }
 // }
 const DATA: any = { root: {} }
-// window.DATA = DATA
-// const FOLDERS: Record<string, TweakpaneType> = {}
-// window.FOLDERS = FOLDERS
 
 // this function traverses the schema and sets the initial input values.
 // - if the global DATA object already holds a key matching the schema input,
@@ -99,8 +96,7 @@ export function buildPane(
 
   // we read the inputs of the nested path
   let INPUTS = get(DATA, `${rootPath}.inputs`)
-  // console.log('creating folder', rootPath)
-  // FOLDERS[rootPath] = rootPane
+
   Object.entries(schema).forEach(([key, input]) => {
     if (typeof input === 'object') {
       if ('type' in input) {
@@ -108,7 +104,6 @@ export function buildPane(
           // if the input is a Folder, we recursively add the folder structure
           // to Tweakpane
           const { title, settings, schema } = input as Folder
-          // console.log(`${rootPath}.${title}`, FOLDERS[`${rootPath}.${title}`])
           const folderPane = rootPane.addFolder({ title, ...settings })
           nestedPanes.push(folderPane)
           buildPane(schema, `${rootPath}.${title}`, setValue, folderPane)
