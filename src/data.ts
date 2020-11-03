@@ -61,15 +61,19 @@ export function getData(schema: Schema, rootPath: string) {
           const { title, schema } = input as Folder
           return { ...accValues, ...getData(schema, `${rootPath}.${title}`) }
         }
-      } else {
-        // if the input is an actual value then we get its value from the
-        // DATA object, and if it isn't set, we set it to the schema value
-        INPUTS[key] = INPUTS[key] ?? (input as InputConstructor).value
-        return { ...accValues, [key]: INPUTS[key] }
       }
-      return accValues
+      // if the input is an actual value then we get its value from the
+      // DATA object, and if it isn't set, we set it to the schema value
+      else if ('value' in input) {
+        // input is shaped as in input = { value: value, ...settings}
+        INPUTS[key] = INPUTS[key] ?? (input as InputConstructor).value
+      } else {
+        // input is an object but is shaped as in input = { x: 0, y: 0 }
+        INPUTS[key] = INPUTS[key] ?? input
+      }
+      return { ...accValues, [key]: INPUTS[key] }
     }
-    // same as above, only this time the input is shaped as in {key: value}
+    // same as above, only this time the input is shaped as in { key: value }
     // instead of { key: { value: value } }
     INPUTS[key] = INPUTS[key] ?? input
     return { ...accValues, [key]: INPUTS[key] }
@@ -120,7 +124,7 @@ export function buildPane(
         }
       } else {
         const { value, ...settings } = input as InputConstructor
-        let _settings = transformSettings(settings)
+        const _settings = value !== undefined ? transformSettings(settings) : undefined
         // we add the INPUTS object to Tweakpane and we listen to changes
         // to trigger setValue, which will set the useTweaks hook state.
         const pane = rootPane.addInput(INPUTS, key, _settings).on('change', v => setValue!(key, v))

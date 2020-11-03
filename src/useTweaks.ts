@@ -5,7 +5,6 @@ import { getData, buildPane } from './data'
 import { Schema, Settings, UseTweaksValues } from './types'
 
 let ROOTPANE: Tweakpane | undefined
-// let refCount = 0
 
 export function useTweaks<T extends Schema>(
   nameOrSchema: string | T,
