@@ -1,4 +1,4 @@
-![A screenshot of the library in use](https://raw.githubusercontent.com/gsimone/use-tweaks/main/_screenshot.png)
+![A screenshot of the library in use](https://i.imgur.com/A7yL1zE.jpg)
 [![npm](https://img.shields.io/npm/v/use-tweaks?style=flat-square)](https://www.npmjs.com/package/use-tweaks) ![npm](https://img.shields.io/npm/dt/use-tweaks.svg?style=flat-square) [![Discord Shield](https://discordapp.com/api/guilds/740090768164651008/widget.png?style=shield)](https://discord.gg/ZZjjNvJ)
 
 Use [Tweakpane](http://cocopon.github.io/tweakpane/) in React apps
