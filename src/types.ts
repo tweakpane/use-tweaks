@@ -1,8 +1,8 @@
-import type { InputParams } from 'tweakpane/dist/types/api/types'
-import type { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
-import type { FolderApi } from 'tweakpane/dist/types/api/folder'
-import type Tweakpane from 'tweakpane'
-import type { InputtableOutType } from 'tweakpane/dist/types/controller/binding-creators/input'
+import { InputParams } from 'tweakpane/dist/types/api/types'
+import { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
+import { FolderApi } from 'tweakpane/dist/types/api/folder'
+import Tweakpane from 'tweakpane'
+import { InputtableOutType } from 'tweakpane/dist/types/controller/binding-creators/input'
 
 export type TweakpaneType = Tweakpane | FolderApi
 
@@ -19,7 +19,7 @@ export interface Schema {
   [name: string]: InputtableOutType | InputConstructor | Folder | Separator
 }
 
-export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> } 
+export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> }
 
 export interface Folder<T extends Schema = Schema> {
   type: SpecialInputTypes
@@ -52,18 +52,17 @@ type Leaves<T, D extends number = 10, P extends string | number | symbol = ''> =
   ? { [i in P]: T['value'] }
   : T extends Separator | Button
   ? never
-  : T extends object 
+  : T extends object
   ? T extends InputtableOutType
-  ? { [i in P]: T }
-  // @ts-ignore
-  : { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
+    ? { [i in P]: T }
+    : // @ts-ignore
+      { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
   : ''
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
 
 // @ts-ignore
 export type UseTweaksValues<T> = UnionToIntersection<Leaves<T>>
-
 
 /*
 function useTweaks<T>(schema: T): UseTweaksValues<T> {
@@ -94,4 +93,3 @@ const b = useTweaks({
   },
 })
 */
-
