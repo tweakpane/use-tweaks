@@ -64,9 +64,11 @@ Use the `makeButton` helper to create and add a button
 ```jsx
 import { useTweaks, makeButton } from "use-tweaks";
 
-const { speed, factor } = useTweaks(
-  makeButton("Log!", () => console.log("Hello World!"))
-);
+const { speed, factor } = useTweaks({
+  speed: 1,
+  factor: { value: 1, min: 10, max: 100 },
+  ...makeButton("Log!", () => console.log("Hello World!"))
+});
 ```
 
 #### Separator
