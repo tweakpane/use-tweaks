@@ -5,6 +5,10 @@ Use [Tweakpane](http://cocopon.github.io/tweakpane/) in React apps
 
 ## Try it here on [Codesandbox](https://codesandbox.io/s/react-three-use-tweaks-uec6i)
 
+```
+npm install tweakpane use-tweaks
+```
+
 ## Basic example
 
 ```jsx
