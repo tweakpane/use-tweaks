@@ -73,6 +73,7 @@
   ],
   "dependencies": {
     "get-value": "^3.0.1",
+    "rafz": "^0.1.13",
     "set-value": "^3.0.2"
   }
 }

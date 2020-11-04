@@ -3,11 +3,12 @@ import { SpecialInputTypes } from './types'
 import get from 'get-value'
 // @ts-expect-error
 import set from 'set-value'
-import { Schema, Folder, Button, InputConstructor, TweakpaneType } from './types'
+import { Schema, Folder, Button, InputConstructor, TweakpaneType, Monitor } from './types'
 import { InputParams } from 'tweakpane/dist/types/api/types'
 import { InputBindingApi } from 'tweakpane/dist/types/api/input-binding'
 import { ButtonApi } from 'tweakpane/dist/types/api/button'
 import { SeparatorApi } from 'tweakpane/dist/types/api/separator'
+import { raf } from 'rafz'
 
 function transformSettings(settings: InputParams) {
   if (!('options' in settings)) return settings
@@ -97,6 +98,7 @@ export function buildPane(
   // nestedPanes will hold the top level folder references that
   // will need to be disposed in useTweaks
   const nestedPanes: Disposable[] = []
+  const rafs: any[] =[]
 
   // we read the inputs of the nested path
   let INPUTS = get(DATA, `${rootPath}.inputs`)
@@ -104,37 +106,85 @@ export function buildPane(
   Object.entries(schema).forEach(([key, input]) => {
     if (typeof input === 'object') {
       if ('type' in input) {
-        if (input.type === SpecialInputTypes.FOLDER) {
+        if (input.type === SpecialInputTypes.MONITOR) {
+          
+          const { title, ref, settings } = input as Monitor
+
+          if (typeof ref === 'function') {
+            const myObj: Record<string, number> = { [title]: ref()}
+            const updateFn = () => {
+              myObj[title] = ref()
+              return true
+            }
+            
+            // raf(updateFn)
+            // rafs.push(updateFn)
+            
+            const monitor = rootPane.addMonitor(myObj, title, {
+              label: title,
+              ...settings
+            }).on('update', () => {
+              console.log('on update')
+              updateFn()
+            })
+            nestedPanes.push(monitor)
+
+          }
+          else if ('current' in ref) {
+            const monitor = rootPane.addMonitor(ref, 'current', {
+              label: title,
+              ...settings
+            })
+            nestedPanes.push(monitor)
+          }
+          else {
+            const monitor = rootPane.addMonitor(ref, 'title', {
+              ...settings
+            })
+            nestedPanes.push(monitor)
+          }
+          
+        } else if (input.type === SpecialInputTypes.FOLDER) {
+          
           // if the input is a Folder, we recursively add the folder structure
           // to Tweakpane
           const { title, settings, schema } = input as Folder
           const folderPane = rootPane.addFolder({ title, ...settings })
           nestedPanes.push(folderPane)
           buildPane(schema, `${rootPath}.${title}`, setValue, folderPane)
+          
         } else if (input.type === SpecialInputTypes.BUTTON) {
+          
           // Input is a Button
           const { title, onClick } = input as Button
           if (typeof onClick !== 'function') throw new Error('Button onClick must be a function.')
           const button = rootPane.addButton({ title }).on('click', onClick)
           nestedPanes.push(button)
+          
         } else if (input.type === SpecialInputTypes.SEPARATOR) {
+          
           // Input is a separator
           const separator = rootPane.addSeparator()
           nestedPanes.push(separator)
+          
         }
       } else {
+        
         const { value, ...settings } = input as InputConstructor
         const _settings = value !== undefined ? transformSettings(settings) : undefined
         // we add the INPUTS object to Tweakpane and we listen to changes
         // to trigger setValue, which will set the useTweaks hook state.
         const pane = rootPane.addInput(INPUTS, key, _settings).on('change', v => setValue!(key, v))
         nestedPanes.push(pane)
+        
       }
     } else {
+      
       const pane = rootPane.addInput(INPUTS, key).on('change', v => setValue!(key, v))
       nestedPanes.push(pane)
+
     }
   }, {})
 
-  return nestedPanes
+  return [nestedPanes, rafs]
 }

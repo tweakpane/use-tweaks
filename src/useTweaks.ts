@@ -3,6 +3,7 @@ import Tweakpane from 'tweakpane'
 
 import { getData, buildPane } from './data'
 import { Schema, Settings, UseTweaksValues } from './types'
+import { raf } from 'rafz';
 
 let ROOTPANE: Tweakpane | undefined
 
@@ -23,12 +24,13 @@ export function useTweaks<T extends Schema>(
     const isRoot = _name === undefined
     const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
     const setValue = (key: string, value: unknown) => set(data => ({ ...data, [key]: value }))
-    const disposablePanes = buildPane(_schema.current, _rootKey, setValue, _pane)
+    const [disposablePanes, callbacks] = buildPane(_schema.current, _rootKey, setValue, _pane)
 
     return () => {
       if (!isRoot) _pane.dispose()
       // we only need to dispose the parentFolder
       else disposablePanes.forEach(d => d.dispose())
+      callbacks.forEach(cb => raf.cancel(cb))
     }
   }, [_name, _rootKey])
 

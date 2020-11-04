@@ -21,6 +21,10 @@ export interface Schema {
 
 export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> }
 
+export interface Monitor {
+  [key: string]: any
+}
+
 export interface Folder<T extends Schema = Schema> {
   type: SpecialInputTypes
   title: string

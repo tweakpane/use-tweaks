@@ -1,4 +1,4 @@
-import { SpecialInputTypes, Schema, Separator, Folder, Button } from './types'
+import { SpecialInputTypes, Schema, Separator, Folder, Button, Settings, Monitor } from './types';
 
 let separatorCount = 0
 
@@ -19,5 +19,16 @@ export const makeDirectory = makeFolder
 export function makeButton(title: string, onClick: () => void): Record<string, Button> {
   return {
     [`_b_${title}`]: { type: SpecialInputTypes.BUTTON, title, onClick },
+  }
+}
+
+export function makeMonitor<T>(title: string, ref: React.Ref<T> | (() => T) | T, settings: Settings): Record<string, Monitor> {
+  return {
+    [`_m_${title}`]: {
+      type: SpecialInputTypes.MONITOR,
+      title,
+      ref,
+      settings
+    }
   }
 }
