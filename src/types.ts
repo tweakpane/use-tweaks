@@ -1,4 +1,4 @@
-import { InputParams } from 'tweakpane/dist/types/api/types'
+import { InputParams, MonitorParams } from 'tweakpane/dist/types/api/types'
 import { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
 import { FolderApi } from 'tweakpane/dist/types/api/folder'
 import Tweakpane from 'tweakpane'
@@ -22,7 +22,10 @@ export interface Schema {
 export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> }
 
 export interface Monitor {
-  [key: string]: any
+  type: SpecialInputTypes
+  title: string
+  ref: any | React.Ref<any> | (() => any)
+  settings: MonitorParams
 }
 
 export interface Folder<T extends Schema = Schema> {
@@ -58,9 +61,8 @@ type Leaves<T, D extends number = 10, P extends string | number | symbol = ''> =
   ? never
   : T extends object
   ? T extends InputtableOutType
-    ? { [i in P]: T }
-    : // @ts-ignore
-      { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
+    ? { [i in P]: T } // @ts-ignore
+    : { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
   : ''
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never

@@ -1,4 +1,5 @@
-import { SpecialInputTypes, Schema, Separator, Folder, Button, Settings, Monitor } from './types';
+import { MonitorParams } from 'tweakpane/dist/types/api/types'
+import { SpecialInputTypes, Schema, Separator, Folder, Button, Settings, Monitor } from './types'
 
 let separatorCount = 0
 
@@ -22,13 +23,17 @@ export function makeButton(title: string, onClick: () => void): Record<string, B
   }
 }
 
-export function makeMonitor<T>(title: string, ref: React.Ref<T> | (() => T) | T, settings: Settings): Record<string, Monitor> {
+export function makeMonitor(
+  title: string,
+  ref: any | React.Ref<any> | (() => any),
+  settings: MonitorParams
+): Record<string, Monitor> {
   return {
     [`_m_${title}`]: {
       type: SpecialInputTypes.MONITOR,
       title,
       ref,
-      settings
-    }
+      settings,
+    },
   }
 }
