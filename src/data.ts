@@ -8,7 +8,6 @@ import { InputParams } from 'tweakpane/dist/types/api/types'
 import { InputBindingApi } from 'tweakpane/dist/types/api/input-binding'
 import { ButtonApi } from 'tweakpane/dist/types/api/button'
 import { SeparatorApi } from 'tweakpane/dist/types/api/separator'
-import { raf } from 'rafz'
 
 function transformSettings(settings: InputParams) {
   if (!('options' in settings)) return settings
@@ -98,7 +97,6 @@ export function buildPane(
   // nestedPanes will hold the top level folder references that
   // will need to be disposed in useTweaks
   const nestedPanes: Disposable[] = []
-  const rafs: any[] =[]
 
   // we read the inputs of the nested path
   let INPUTS = get(DATA, `${rootPath}.inputs`)
@@ -116,9 +114,6 @@ export function buildPane(
               myObj[title] = ref()
               return true
             }
-            
-            // raf(updateFn)
-            // rafs.push(updateFn)
             
             const monitor = rootPane.addMonitor(myObj, title, {
               label: title,
@@ -186,5 +181,5 @@ export function buildPane(
     }
   }, {})
 
-  return [nestedPanes, rafs]
+  return nestedPanes
 }
