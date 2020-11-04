@@ -1,5 +1,5 @@
 import { MonitorParams } from 'tweakpane/dist/types/api/types'
-import { SpecialInputTypes, Schema, Separator, Folder, Button, Settings, Monitor } from './types'
+import { SpecialInputTypes, Schema, Separator, Folder, Button, Monitor } from './types'
 
 let separatorCount = 0
 
