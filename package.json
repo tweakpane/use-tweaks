@@ -73,6 +73,7 @@
   ],
   "dependencies": {
     "get-value": "^3.0.1",
+    "query-string": "^6.13.6",
     "set-value": "^3.0.2"
   }
 }

@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame } from 'react-three-fiber'
 import { OrbitControls, ContactShadows, useGLTF, useCubeTexture, Octahedron } from '@react-three/drei'
-import { useTweaks, makeFolder, makeSeparator, makeButton } from 'use-tweaks'
+import { useTweaks, makeFolder, makeSeparator, makeButton } from '../../src'
 
 import Badge from './Badge'
 
@@ -20,7 +20,7 @@ function Suzanne(props) {
       scale: { value: 1, max: 3 },
       ...makeButton('Log Console', () => console.log('something in the console ' + Date.now())),
     }),
-  })
+  }, { setGetFromUrl: true })
 
   return (
     <mesh {...props} position-x={position.x} position-y={position.y} scale={[scale, scale, scale]}>
@@ -32,7 +32,7 @@ function Suzanne(props) {
 
 function Octa({ envMap }) {
   const mesh = useRef()
-  const { move } = useTweaks('Octa', { move: true })
+  const { move } = useTweaks('Octa', { move: true }, { setGetFromUrl: true }, )
 
   useFrame(({ clock }) => {
     if (move) {
@@ -52,7 +52,7 @@ function Scene() {
 
   const { model } = useTweaks({
     model: { value: 'Suzanne', options: ['suzanne', 'Octahedron'] },
-  })
+  }, { setGetFromUrl: true })
 
   return (
     <Suspense fallback={null}>
@@ -63,7 +63,7 @@ function Scene() {
 
 export default function App() {
   const ref = React.useRef<HTMLDivElement>(null)
-  const { color } = useTweaks({ color: { value: '#f2f2f2', label: 'background' } }, { container: ref })
+  const { color } = useTweaks({ color: { value: '#f2f2f2', label: 'background' } }, { container: ref, setGetFromUrl: true })
 
   return (
     <>
