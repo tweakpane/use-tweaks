@@ -3,7 +3,7 @@
 
 Use [Tweakpane](http://cocopon.github.io/tweakpane/) in React apps
 
-## Try it here on [Codesandbox](https://codesandbox.io/s/use-tweaks-forked-smcf4)
+## Try it here on [Codesandbox](https://codesandbox.io/s/use-tweaks-example-ekqv2)
 
 ```
 npm install tweakpane use-tweaks
