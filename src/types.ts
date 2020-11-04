@@ -19,7 +19,10 @@ export interface Schema {
   [name: string]: InputtableOutType | InputConstructor | Folder | Separator
 }
 
-export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> }
+export type Settings = Omit<TweakpaneConfig, 'container'> & {
+  container?: React.RefObject<HTMLElement>
+  setGetFromUrl?: boolean
+}
 
 export interface Folder<T extends Schema = Schema> {
   type: SpecialInputTypes
