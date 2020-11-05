@@ -8,6 +8,7 @@ import { InputParams } from 'tweakpane/dist/types/api/types'
 import { InputBindingApi } from 'tweakpane/dist/types/api/input-binding'
 import { ButtonApi } from 'tweakpane/dist/types/api/button'
 import { SeparatorApi } from 'tweakpane/dist/types/api/separator'
+import { noCase } from 'change-case'
 
 function transformSettings(settings: InputParams) {
   if (!('options' in settings)) return settings
@@ -141,11 +142,13 @@ export function buildPane(
         const _settings = value !== undefined ? transformSettings(settings) : undefined
         // we add the INPUTS object to Tweakpane and we listen to changes
         // to trigger setValue, which will set the useTweaks hook state.
-        const pane = rootPane.addInput(INPUTS, key, _settings).on('change', v => setValue!(key, v))
+        const pane = rootPane
+          .addInput(INPUTS, key, { label: noCase(key), ..._settings })
+          .on('change', v => setValue!(key, v))
         nestedPanes.push(pane)
       }
     } else {
-      const pane = rootPane.addInput(INPUTS, key).on('change', v => setValue!(key, v))
+      const pane = rootPane.addInput(INPUTS, key, { label: noCase(key) }).on('change', v => setValue!(key, v))
       nestedPanes.push(pane)
     }
   }, {})
