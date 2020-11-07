@@ -1,36 +1,56 @@
-import { useState, useLayoutEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
+import shallow from 'zustand/shallow'
 import Tweakpane from 'tweakpane'
 
-import { getData, buildPane } from './data'
+import { store, initData, buildPane } from './data'
 import { Schema, Settings, UseTweaksValues } from './types'
+import { makeFolder } from './helpers'
 
 let ROOTPANE: Tweakpane | undefined
 
+function pick<T extends object>(object: T, keys: (keyof T)[]) {
+  return keys.reduce((obj, key) => {
+    if (object && object.hasOwnProperty(key)) {
+      obj[key] = object[key]
+    }
+    return obj
+  }, {} as Record<keyof T, unknown>)
+}
+
+export function useTweaks<T extends Schema>(schema: T, settings?: Settings): UseTweaksValues<T>
+export function useTweaks<T extends Schema>(name: string, schema: T, settings?: Settings): UseTweaksValues<T>
 export function useTweaks<T extends Schema>(
   nameOrSchema: string | T,
   schemaOrSettings?: T | Settings | undefined,
   settings?: Settings
 ): UseTweaksValues<T> {
-  const _name = typeof nameOrSchema === 'string' ? nameOrSchema : undefined
-  const _rootKey = typeof nameOrSchema === 'string' ? 'root.' + nameOrSchema : 'root'
+  const _schema = useRef(
+    typeof nameOrSchema === 'string' ? makeFolder(nameOrSchema, schemaOrSettings as T) : nameOrSchema
+  )
   const _settings = useRef(typeof nameOrSchema === 'string' ? settings : (schemaOrSettings as Settings))
-  const _schema = useRef(typeof nameOrSchema === 'string' ? (schemaOrSettings as T) : nameOrSchema)
 
-  const [data, set] = useState(() => getData(_schema.current, _rootKey))
+  const data = useMemo(() => {
+    const data = initData(_schema.current)
+    store.setState(s => ({ data: { ...s.data, ...data } }))
+    return data
+  }, [])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     ROOTPANE = ROOTPANE || new Tweakpane({ ..._settings, container: _settings.current?.container?.current! })
-    const isRoot = _name === undefined
-    const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
-    const setValue = (key: string, value: unknown) => set(data => ({ ...data, [key]: value }))
-    const disposablePanes = buildPane(_schema.current, _rootKey, setValue, _pane)
+    const disposeFn = buildPane(_schema.current, ROOTPANE)
 
-    return () => {
-      if (!isRoot) _pane.dispose()
-      // we only need to dispose the parentFolder
-      else disposablePanes.forEach(d => d.dispose())
-    }
-  }, [_name, _rootKey])
+    return disposeFn
+  }, [])
 
-  return data as UseTweaksValues<T>
+  // @ts-ignore
+  return store(
+    s =>
+      // @ts-ignore
+      Object.entries(pick(s.data, Object.keys(data))).reduce(
+        // @ts-ignore
+        (acc, [k, v]) => ({ ...acc, [k.split('.').pop()]: v }),
+        {}
+      ),
+    shallow
+  )
 }

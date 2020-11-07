@@ -10,9 +10,10 @@ function Suzanne(props) {
   const { envMap } = props
   const { nodes } = useGLTF('./suzanne.glb')
 
-  const { color, position, scale } = useTweaks('Suzanne', {
-    color: '#ff005b',
-    ...makeSeparator(),
+  console.log('Suzanne')
+
+  const { position, scale } = useTweaks('Suzanne', {
+    // ...makeSeparator(), // not handled yet
     ...makeFolder('Position', {
       position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
     }),
@@ -22,10 +23,12 @@ function Suzanne(props) {
     }),
   })
 
+  const { modelColor } = useTweaks({ modelColor: '#f00' })
+
   return (
     <mesh {...props} position-x={position.x} position-y={position.y} scale={[scale, scale, scale]}>
       <primitive object={nodes.Suzanne.geometry} dispose={null} attach="geometry" />
-      <meshPhysicalMaterial color={new THREE.Color(color)} envMap={envMap} metalness={1} roughness={0} />
+      <meshPhysicalMaterial color={new THREE.Color(modelColor)} envMap={envMap} metalness={1} roughness={0} />
     </mesh>
   )
 }
@@ -50,6 +53,8 @@ function Octa({ envMap }) {
     move: true,
   })
 
+  const { modelColor } = useTweaks({ modelColor: '#f00' })
+
   useFrame(({ clock }) => {
     if (move) {
       const s = Math.sin(clock.getElapsedTime() * speed)
@@ -63,7 +68,7 @@ function Octa({ envMap }) {
 
   return (
     <Octahedron ref={mesh} args={[1, 6]}>
-      <meshPhysicalMaterial color={'#f51d63'} envMap={envMap} metalness={1} roughness={0} />
+      <meshPhysicalMaterial color={modelColor} envMap={envMap} metalness={1} roughness={0} />
     </Octahedron>
   )
 }
@@ -71,25 +76,28 @@ function Octa({ envMap }) {
 function Scene() {
   const envMap = useCubeTexture(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'], { path: '/cube/' })
 
-  const { model } = useTweaks({
-    model: { value: 'Octahedron', options: ['suzanne', 'Octahedron'] },
-  })
+  // const { model } = useTweaks({
+  //   model: { value: 'Octahedron', options: ['suzanne', 'Octahedron'] },
+  // })
 
   return (
     <Suspense fallback={null}>
-      {model === 'Octahedron' ? <Octa envMap={envMap} /> : <Suzanne envMap={envMap} />}
+      <Octa envMap={envMap} />
+      <Suzanne envMap={envMap} />
     </Suspense>
   )
 }
 
 export default function App() {
   const ref = React.useRef<HTMLDivElement>(null)
-  const { bgColor } = useTweaks({ bgColor: { value: '#f2f2f2' } }, { container: ref })
+  const { bgcolor } = useTweaks({ bgcolor: { value: '#f2f2f2' } }, { container: ref })
+
+  console.log('App')
 
   return (
     <>
       <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
-        <color attach="background" args={[bgColor]} />
+        <color attach="background" args={[bgcolor]} />
         <fog attach="fog" args={['white', 10, 40]} />
 
         <ambientLight intensity={0.5} />
