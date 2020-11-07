@@ -6,6 +6,8 @@ import { Schema, Settings, UseTweaksValues } from './types'
 
 let ROOTPANE: Tweakpane | undefined
 
+export function useTweaks<T extends Schema>(schema: T, settings?: Settings): UseTweaksValues<T>
+export function useTweaks<T extends Schema>(name: string, schema: T, settings?: Settings): UseTweaksValues<T>
 export function useTweaks<T extends Schema>(
   nameOrSchema: string | T,
   schemaOrSettings?: T | Settings | undefined,
