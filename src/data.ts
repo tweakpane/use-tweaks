@@ -117,7 +117,7 @@ export function buildPane(
           } else if ('current' in ref) {
             monitor = rootPane.addMonitor(ref, 'current', { label: title, ...settings })
           } else {
-            monitor = rootPane.addMonitor(ref, 'title', settings)
+            monitor = rootPane.addMonitor(ref, title, settings)
           }
           nestedPanes.push(monitor)
         } else if (input.type === SpecialInputTypes.FOLDER) {
