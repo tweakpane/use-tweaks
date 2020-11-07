@@ -62,6 +62,7 @@ export function getData(schema: Schema, rootPath: string) {
           const { title, schema } = input as Folder
           return { ...accValues, ...getData(schema, `${rootPath}.${title}`) }
         }
+        return { ...accValues }
       }
       // if the input is an actual value then we get its value from the
       // DATA object, and if it isn't set, we set it to the schema value
