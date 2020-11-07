@@ -47,6 +47,11 @@ function Octa({ envMap }) {
       max: 1.5,
       interval: 100,
     }),
+    ...makeMonitor("TestMonitor", sin, {
+      multiline: true,
+      count: 10,
+      interval: 16
+    }),
     move: true,
   })
 
