@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame } from 'react-three-fiber'
 import { OrbitControls, ContactShadows, useGLTF, useCubeTexture, Octahedron } from '@react-three/drei'
-import { useTweaks, makeFolder, makeSeparator, makeButton } from 'use-tweaks'
+import { useTweaks, makeFolder, makeSeparator, makeButton, makeMonitor } from 'use-tweaks'
 
 import Badge from './Badge'
 
@@ -32,11 +32,37 @@ function Suzanne(props) {
 
 function Octa({ envMap }) {
   const mesh = useRef()
-  const { move } = useTweaks('Octa', { move: true })
+  const sin = useRef(0)
+
+  const { move, speed } = useTweaks('Octa', {
+    speed: { value: 1, min: 1, max: 4 },
+    ...makeMonitor('myMonitor', sin, {
+      view: 'graph',
+      min: -1,
+      max: +2,
+    }),
+    ...makeMonitor('fnMonitor', Math.random, {
+      view: 'graph',
+      min: -0.5,
+      max: 1.5,
+      interval: 100,
+    }),
+    ...makeMonitor("TestMonitor", sin, {
+      multiline: true,
+      count: 10,
+      interval: 16
+    }),
+    move: true,
+  })
 
   useFrame(({ clock }) => {
     if (move) {
-      mesh.current.position.y = Math.sin(clock.getElapsedTime()) * 0.5 + 0.5
+      const s = Math.sin(clock.getElapsedTime() * speed)
+      const c = Math.cos(clock.getElapsedTime() * 2 * speed)
+      sin.current = s * s * c + 0.9
+      if (mesh.current) {
+        mesh.current.position.y = sin.current
+      }
     }
   })
 
@@ -51,7 +77,7 @@ function Scene() {
   const envMap = useCubeTexture(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'], { path: '/cube/' })
 
   const { model } = useTweaks({
-    model: { value: 'Suzanne', options: ['suzanne', 'Octahedron'] },
+    model: { value: 'Octahedron', options: ['suzanne', 'Octahedron'] },
   })
 
   return (
@@ -63,12 +89,12 @@ function Scene() {
 
 export default function App() {
   const ref = React.useRef<HTMLDivElement>(null)
-  const { color } = useTweaks({ color: { value: '#f2f2f2', label: 'background' } }, { container: ref })
+  const { bgColor } = useTweaks({ bgColor: { value: '#f2f2f2' } }, { container: ref })
 
   return (
     <>
       <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
-        <color attach="background" args={[color]} />
+        <color attach="background" args={[bgColor]} />
         <fog attach="fog" args={['white', 10, 40]} />
 
         <ambientLight intensity={0.5} />

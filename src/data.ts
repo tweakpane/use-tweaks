@@ -3,11 +3,12 @@ import { SpecialInputTypes } from './types'
 import get from 'get-value'
 // @ts-expect-error
 import set from 'set-value'
-import { Schema, Folder, Button, InputConstructor, TweakpaneType } from './types'
+import { Schema, Folder, Button, InputConstructor, TweakpaneType, Monitor } from './types'
 import { InputParams } from 'tweakpane/dist/types/api/types'
 import { InputBindingApi } from 'tweakpane/dist/types/api/input-binding'
 import { ButtonApi } from 'tweakpane/dist/types/api/button'
 import { SeparatorApi } from 'tweakpane/dist/types/api/separator'
+import { noCase } from 'change-case'
 
 function transformSettings(settings: InputParams) {
   if (!('options' in settings)) return settings
@@ -61,6 +62,7 @@ export function getData(schema: Schema, rootPath: string) {
           const { title, schema } = input as Folder
           return { ...accValues, ...getData(schema, `${rootPath}.${title}`) }
         }
+        return { ...accValues }
       }
       // if the input is an actual value then we get its value from the
       // DATA object, and if it isn't set, we set it to the schema value
@@ -104,7 +106,21 @@ export function buildPane(
   Object.entries(schema).forEach(([key, input]) => {
     if (typeof input === 'object') {
       if ('type' in input) {
-        if (input.type === SpecialInputTypes.FOLDER) {
+        if (input.type === SpecialInputTypes.MONITOR) {
+          const { title, ref, settings } = input as Monitor
+          let monitor
+          if (typeof ref === 'function') {
+            const myObj = { current: ref() }
+            const updateFn = () => (myObj.current = ref())
+
+            monitor = rootPane.addMonitor(myObj, 'current', { label: title, ...settings }).on('update', updateFn)
+          } else if ('current' in ref) {
+            monitor = rootPane.addMonitor(ref, 'current', { label: title, ...settings })
+          } else {
+            monitor = rootPane.addMonitor(ref, title, settings)
+          }
+          nestedPanes.push(monitor)
+        } else if (input.type === SpecialInputTypes.FOLDER) {
           // if the input is a Folder, we recursively add the folder structure
           // to Tweakpane
           const { title, settings, schema } = input as Folder
@@ -127,11 +143,13 @@ export function buildPane(
         const _settings = value !== undefined ? transformSettings(settings) : undefined
         // we add the INPUTS object to Tweakpane and we listen to changes
         // to trigger setValue, which will set the useTweaks hook state.
-        const pane = rootPane.addInput(INPUTS, key, _settings).on('change', v => setValue!(key, v))
+        const pane = rootPane
+          .addInput(INPUTS, key, { label: noCase(key), ..._settings })
+          .on('change', v => setValue(key, v))
         nestedPanes.push(pane)
       }
     } else {
-      const pane = rootPane.addInput(INPUTS, key).on('change', v => setValue!(key, v))
+      const pane = rootPane.addInput(INPUTS, key, { label: noCase(key) }).on('change', v => setValue(key, v))
       nestedPanes.push(pane)
     }
   }, {})

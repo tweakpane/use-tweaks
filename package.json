@@ -72,6 +72,7 @@
     }
   ],
   "dependencies": {
+    "change-case": "^4.1.1",
     "get-value": "^3.0.1",
     "set-value": "^3.0.2"
   }
