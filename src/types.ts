@@ -45,30 +45,41 @@ export interface Button {
   onClick: () => void
 }
 
-type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]]
-
 type Join<T, K extends keyof T, P> = '' extends P ? { [i in K]: T[K] } : P
 
 // can probably be optimized ¯\_(ツ)_/¯
-// @ts-ignore
-type Leaves<T, D extends number = 10, P extends string | number | symbol = ''> = [D] extends [never]
-  ? never
-  : T extends Folder // @ts-ignore
-  ? Join<T, 'schema', Leaves<T['schema'], Prev[D]>>
+type Leaves<T, P extends string | number | symbol = ''> = {
+  0: T extends { schema: any } ? Join<T, 'schema', Leaves<T['schema']>> : never
+  1: T extends { value: any } ? { [i in P]: T['value'] } : never
+  2: never
+  3: { [i in P]: T }
+  4: { [K in keyof T]: Join<T, K, Leaves<T[K], K>> }[keyof T]
+  5: ''
+}[T extends Folder
+  ? 0
   : T extends InputConstructor
-  ? { [i in P]: T['value'] }
+  ? 1
   : T extends Separator | Button
-  ? never
+  ? 2
   : T extends object
   ? T extends InputtableOutType
-    ? { [i in P]: T } // @ts-ignore
-    : { [K in keyof T]: Join<T, K, Leaves<T[K], Prev[D], K>> }[keyof T]
-  : ''
+    ? 3
+    : 4
+  : 5]
+
+/**
+ * It does nothing but beautify union type
+ *
+ * ```
+ * type A = { a: 'a' } & { b: 'b' } // { a: 'a' } & { b: 'b' }
+ * type B = Id<{ a: 'a' } & { b: 'b' }> // { a: 'a', b: 'b' }
+ * ```
+ */
+type Id<T> = T extends infer TT ? { [k in keyof TT]: TT[k] } : never
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
 
-// @ts-ignore
-export type UseTweaksValues<T> = UnionToIntersection<Leaves<T>>
+export type UseTweaksValues<T> = Id<UnionToIntersection<Leaves<T>>>
 
 /*
 function useTweaks<T>(schema: T): UseTweaksValues<T> {
@@ -86,7 +97,7 @@ const b = useTweaks({
       d: 'al',
       f: 3,
       position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
-      color: { r: 255,g:255,b:255,a:1 },
+      color: { r: 255, g: 255, b: 255, a: 1 },
       offset: { x: 50, y: 25 },
       _33: {
         type: SpecialInputTypes.FOLDER,
