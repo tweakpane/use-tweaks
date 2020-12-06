@@ -1,8 +1,9 @@
-import { useState, useLayoutEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import Tweakpane from 'tweakpane'
 
 import { getData, buildPane } from './data'
 import { Schema, Settings, UseTweaksValues } from './types'
+import { useIsomorphicLayoutEffect } from './utils'
 
 let ROOTPANE: Tweakpane | undefined
 
@@ -20,7 +21,7 @@ export function useTweaks<T extends Schema>(
 
   const [data, set] = useState(() => getData(_schema.current, _rootKey))
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     ROOTPANE = ROOTPANE || new Tweakpane({ ..._settings, container: _settings.current?.container?.current! })
     const isRoot = _name === undefined
     const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
