@@ -4,17 +4,13 @@ import get from 'get-value'
 // @ts-expect-error
 import set from 'set-value'
 import { Schema, Folder, Button, InputConstructor, TweakpaneType, Monitor } from './types'
-import { InputParams } from 'tweakpane/dist/types/api/types'
-import { InputBindingApi } from 'tweakpane/dist/types/api/input-binding'
-import { ButtonApi } from 'tweakpane/dist/types/api/button'
-import { SeparatorApi } from 'tweakpane/dist/types/api/separator'
 import { noCase } from 'change-case'
+import { ButtonApi, InputBindingApi, InputParams, SeparatorApi } from '@tweakpane/core'
 
 function transformSettings(settings: InputParams) {
   if (!('options' in settings)) return settings
 
   if (Array.isArray(settings.options)) {
-    // @ts-expect-error
     settings.options = settings.options.reduce((acc, option) => ({ ...acc, [option]: option }), {})
   }
   return settings
@@ -145,11 +141,11 @@ export function buildPane(
         // to trigger setValue, which will set the useTweaks hook state.
         const pane = rootPane
           .addInput(INPUTS, key, { label: noCase(key), ..._settings })
-          .on('change', (v) => setValue(key, v))
+          .on('change', (ev) => setValue(key, ev.value))
         nestedPanes.push(pane)
       }
     } else {
-      const pane = rootPane.addInput(INPUTS, key, { label: noCase(key) }).on('change', (v) => setValue(key, v))
+      const pane = rootPane.addInput(INPUTS, key, { label: noCase(key) }).on('change', (ev) => setValue(key, ev.value))
       nestedPanes.push(pane)
     }
   }, {})

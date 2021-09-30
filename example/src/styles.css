@@ -22,5 +22,6 @@ body,
   position: fixed;
   top: 1rem;
   left: 1rem;
+  width: 256px;
   z-index: 10;
 }
