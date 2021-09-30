@@ -21,7 +21,7 @@ export function useTweaks<T extends Schema>(
   const [data, set] = useState(() => getData(_schema.current, _rootKey))
 
   useLayoutEffect(() => {
-    ROOTPANE = ROOTPANE || new Pane({ ..._settings, container: _settings.current?.container?.current! })
+    ROOTPANE = ROOTPANE || new Pane({ ..._settings.current, container: _settings.current?.container?.current! })
     const isRoot = _name === undefined
     const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
     const setValue = (key: string, value: unknown) => set((data) => ({ ...data, [key]: value }))
