@@ -11,7 +11,7 @@ function Suzanne(props) {
   const { nodes } = useGLTF('./suzanne.glb')
 
   const { color, position, scale } = useTweaks('Suzanne', {
-    color: '#ff005b',
+    color: 'rgb(255, 0, 91)',
     ...makeSeparator(),
     ...makeFolder('Position', {
       position: { value: { x: 0, y: 0 }, min: { x: -1, y: -1 }, max: { x: 1, y: 1 } },
@@ -89,7 +89,7 @@ function Scene() {
 
 export default function App() {
   const ref = React.useRef<HTMLDivElement>(null)
-  const { bgColor } = useTweaks({ bgColor: { value: '#f2f2f2' } }, { container: ref })
+  const { bgColor } = useTweaks({ bgColor: { value: '#f2f2f2' } }, { container: ref, title: 'Parameters' })
 
   return (
     <>

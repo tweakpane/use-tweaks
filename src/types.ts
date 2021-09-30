@@ -1,10 +1,8 @@
-import { InputParams, MonitorParams } from 'tweakpane/dist/types/api/types'
-import { TweakpaneConfig } from 'tweakpane/dist/types/tweakpane-config'
-import { FolderApi } from 'tweakpane/dist/types/api/folder'
-import Tweakpane from 'tweakpane'
-import { InputtableOutType } from 'tweakpane/dist/types/controller/binding-creators/input'
+import { FolderApi, InputParams, MonitorParams } from '@tweakpane/core'
+import { Pane } from 'tweakpane'
+import { PaneConfig } from 'tweakpane/dist/types/pane/pane-config'
 
-export type TweakpaneType = Tweakpane | FolderApi
+export type TweakpaneType = Pane | FolderApi
 
 export enum SpecialInputTypes {
   SEPARATOR,
@@ -13,13 +11,15 @@ export enum SpecialInputTypes {
   MONITOR,
 }
 
-export type InputConstructor = InputParams & { value: InputtableOutType }
+type InputValue = boolean | number | object | string
+
+export type InputConstructor = InputParams & { value: InputValue }
 
 export interface Schema {
-  [name: string]: InputtableOutType | InputConstructor | Folder | Separator
+  [name: string]: InputValue | InputConstructor | Folder | Separator
 }
 
-export type Settings = Omit<TweakpaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> }
+export type Settings = Omit<PaneConfig, 'container'> & { container?: React.RefObject<HTMLElement> }
 
 export interface Monitor {
   type: SpecialInputTypes
@@ -62,7 +62,7 @@ type Leaves<T, P extends string | number | symbol = ''> = {
   : T extends Separator | Button
   ? 2
   : T extends object
-  ? T extends InputtableOutType
+  ? T extends InputValue
     ? 3
     : 4
   : 5]

@@ -1298,6 +1298,11 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
+"@tweakpane/core@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@tweakpane/core/-/core-1.0.6.tgz#cfdecd9612caab72f25abc60bfab9df2c1381f4c"
+  integrity sha512-Q5331dFAgGyLvQHzrUdK11FV5nX7UTucW2x9w/Nl0h2zd/qtxs9mtbYSU5xEGnj5mtuI095CMV3mcQjYpyTCkQ==
+
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.14":
   version "7.1.16"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.16.tgz#bc12c74b7d65e82d29876b5d0baf5c625ac58702"
@@ -9031,10 +9036,10 @@ tty-browserify@0.0.0:
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"
   integrity sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=
 
-tweakpane@^1.5.6:
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-1.5.6.tgz#52a8279ceb80e1abe6a7f29a25883921ac79ecbe"
-  integrity sha512-RKo1kIGqLP/M8xXnNhmtVQtUSgT+ZGQo7LfgP9nEt3d2ZVjeeycpiDffnUNeX1RvB2of+gbWAKeZolOXpVfjTQ==
+tweakpane@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-3.0.5.tgz#0dc76ac129b4b771dc6491558aec6e5516984946"
+  integrity sha512-HivFjOs510RbZSNgxv4x5LVFsHFN1ryfgpOp3n6wrgg1jLxbdlA/UTIbTLi/DYH7g76rGQqW/+IRmHPfjIujpQ==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
