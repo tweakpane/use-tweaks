@@ -24,13 +24,13 @@ export function useTweaks<T extends Schema>(
     ROOTPANE = ROOTPANE || new Tweakpane({ ..._settings, container: _settings.current?.container?.current! })
     const isRoot = _name === undefined
     const _pane = _name ? ROOTPANE.addFolder({ title: _name }) : ROOTPANE
-    const setValue = (key: string, value: unknown) => set(data => ({ ...data, [key]: value }))
+    const setValue = (key: string, value: unknown) => set((data) => ({ ...data, [key]: value }))
     const disposablePanes = buildPane(_schema.current, _rootKey, setValue, _pane)
 
     return () => {
       if (!isRoot) _pane.dispose()
       // we only need to dispose the parentFolder
-      else disposablePanes.forEach(d => d.dispose())
+      else disposablePanes.forEach((d) => d.dispose())
     }
   }, [_name, _rootKey])
 

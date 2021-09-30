@@ -10,9 +10,9 @@ export function makeSeparator(): Record<string, Separator> {
 }
 
 export function makeFolder<T extends Schema, P extends string>(title: P, schema: T, expanded = true) {
-  return ({
+  return {
     [`_f_${title}`]: { type: SpecialInputTypes.FOLDER, title, schema, settings: { expanded } },
-  } as unknown) as Record<P, Folder<T>>
+  } as unknown as Record<P, Folder<T>>
 }
 
 export const makeDirectory = makeFolder
