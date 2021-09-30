@@ -145,11 +145,11 @@ export function buildPane(
         // to trigger setValue, which will set the useTweaks hook state.
         const pane = rootPane
           .addInput(INPUTS, key, { label: noCase(key), ..._settings })
-          .on('change', v => setValue(key, v))
+          .on('change', (v) => setValue(key, v))
         nestedPanes.push(pane)
       }
     } else {
-      const pane = rootPane.addInput(INPUTS, key, { label: noCase(key) }).on('change', v => setValue(key, v))
+      const pane = rootPane.addInput(INPUTS, key, { label: noCase(key) }).on('change', (v) => setValue(key, v))
       nestedPanes.push(pane)
     }
   }, {})
