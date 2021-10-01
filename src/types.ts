@@ -1,4 +1,4 @@
-import { FolderApi, InputParams, MonitorParams } from '@tweakpane/core'
+import { FolderApi, InputParams, MonitorParams, RgbaColorObject, RgbColorObject } from '@tweakpane/core'
 import { Pane } from 'tweakpane'
 import { PaneConfig } from 'tweakpane/dist/types/pane/pane-config'
 
@@ -11,7 +11,8 @@ export enum SpecialInputTypes {
   MONITOR,
 }
 
-type InputValue = boolean | number | object | string
+type Point2dObject = { x: number; y: number }
+type InputValue = boolean | number | string | Point2dObject | RgbColorObject | RgbaColorObject
 
 export type InputConstructor = InputParams & { value: InputValue }
 
