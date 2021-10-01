@@ -8,7 +8,7 @@ import Badge from './Badge'
 
 function Suzanne(props) {
   const { envMap } = props
-  const { nodes } = useGLTF('./suzanne.glb')
+  const { nodes } = useGLTF('./suzanne.glb') as any
 
   const { color, position, scale } = useTweaks('Suzanne', {
     color: 'rgb(255, 0, 91)',
@@ -31,7 +31,7 @@ function Suzanne(props) {
 }
 
 function Octa({ envMap }) {
-  const mesh = useRef()
+  const mesh = useRef<any>()
   const sin = useRef(0)
 
   const { move, speed } = useTweaks('Octa', {
@@ -94,7 +94,7 @@ export default function App() {
   return (
     <>
       <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
-        <color attach="background" args={[bgColor]} />
+        <color attach="background" args={[bgColor] as any} />
         <fog attach="fog" args={['white', 10, 40]} />
 
         <ambientLight intensity={0.5} />
